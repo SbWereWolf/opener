@@ -1,0 +1,16 @@
+{
+  "name": "versite/opener",
+  "description": "opener for remote unlock door",
+  "type": "api",
+  "require": {
+    "slim/slim": "^3.11",
+    "ext-pdo": "*"
+  },
+  "license": "GPL",
+  "authors": [
+    {
+      "name": "SbWereWolf",
+      "email": "ulfnew@gmail.com"
+    }
+  ]
+}
