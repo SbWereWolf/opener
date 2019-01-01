@@ -4,7 +4,8 @@
   "type": "api",
   "require": {
     "slim/slim": "^3.11",
-    "ext-pdo": "*"
+    "ext-pdo": "*",
+    "ext-json": "*"
   },
   "license": "GPL",
   "authors": [

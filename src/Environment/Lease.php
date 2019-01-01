@@ -9,6 +9,7 @@ namespace Environment;
 
 
 use Latch\CheckInLogbook;
+use Presentation\HaspSetView;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -29,7 +30,10 @@ class Lease extends Router
         $token = $this->token;
 
         $app->get($root, function (Request $request, Response $response, array $arguments) {
-            $latches = (new CheckInLogbook())->getActual();
+            $haspSet = (new CheckInLogbook())->getActual();
+            $json = (new HaspSetView($haspSet))->toJson();
+
+            $response = $response->withJson($json)->withStatus(200);
 
             return $response;
         });

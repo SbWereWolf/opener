@@ -13,13 +13,15 @@ use Session\IToken;
 class CheckInLogbook implements ICheckInLogbook
 {
 
-    public function getActual(): array
+    public function getActual(): IHaspSet
     {
-        return array();
+        $result = new HaspSet();
+        return $result;
     }
 
-    public function getCurrent(IToken $token): array
+    public function getCurrent(IToken $token): IHaspSet
     {
-        return array();
+        $result = new HaspSet();
+        return $result;
     }
 }

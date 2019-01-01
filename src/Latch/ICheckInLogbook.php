@@ -11,6 +11,7 @@ use Session\IToken;
 
 interface ICheckInLogbook
 {
-    public function getActual():array;
-    public function getCurrent(IToken $token):array;
+    public function getActual(): IHaspSet;
+
+    public function getCurrent(IToken $token): IHaspSet;
 }
