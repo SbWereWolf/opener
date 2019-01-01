@@ -5,7 +5,6 @@
  * DateTime: 01.01.2019 0:08
  */
 
-use Environment\Routing;
 use Slim\Container;
 
 define('APPLICATION_ROOT', realpath(__DIR__) . DIRECTORY_SEPARATOR . '..');
@@ -21,15 +20,10 @@ $configuration['displayErrorDetails'] = true;
 $configuration['addContentLengthHeader'] = false;
 $container = new Container(['settings' => $configuration]);
 
-$app = new \Slim\App($container);
-
-$isSuccess = (new Routing($app))->initialize();
-
-if ($isSuccess) {
-// Run app
-    try {
-        $app->run();
-    } catch (Exception $e) {
-        echo $e->getMessage();
-    }
+try {
+    (new \Environment\RouteSet(new \Slim\App($container)))
+        ->setUp()
+        ->run();
+} catch (Exception $e) {
+    echo $e->getMessage();
 }
