@@ -5,22 +5,17 @@
  * DateTime: 01.01.2019 4:48
  */
 
-namespace Environment;
+namespace Environment\User;
 
 
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class User extends Router
+class Router extends \Environment\Router
 {
     private $root = '/user/';
 
-    public function __construct(\Slim\App $app)
-    {
-        parent::__construct($app);
-    }
-
-    public function settingUpRoutes(): Routing
+    public function settingUpRoutes(): \Environment\Routing
     {
         $app = $this->getHandler();
         $root = $this->root;

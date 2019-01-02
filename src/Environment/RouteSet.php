@@ -25,10 +25,10 @@ class RouteSet
     {
         $app = $this->handler;
 
-        $app = (new Lease($app))->settingUpRoutes()->getHandler();
-        $app = (new Session($app))->settingUpRoutes()->getHandler();
-        $app = (new Unlock($app))->settingUpRoutes()->getHandler();
-        $app = (new User($app))->settingUpRoutes()->getHandler();
+        $app = (new \Environment\Lease\Router($app))->settingUpRoutes()->getHandler();
+        $app = (new \Environment\Session\Router($app))->settingUpRoutes()->getHandler();
+        $app = (new \Environment\Unlock\Router($app))->settingUpRoutes()->getHandler();
+        $app = (new \Environment\User\Router($app))->settingUpRoutes()->getHandler();
 
         return $app;
     }

@@ -5,23 +5,19 @@
  * DateTime: 01.01.2019 4:48
  */
 
-namespace Environment;
+namespace Environment\Lease;
 
 
+use Environment\Routing;
 use Latch\CheckInLogbook;
 use Presentation\HaspSetView;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class Lease extends Router
+class Router extends \Environment\Router
 {
     private $root = '/lease/';
     private $token = '{token}/';
-
-    public function __construct(\Slim\App $app)
-    {
-        parent::__construct($app);
-    }
 
     public function settingUpRoutes(): Routing
     {

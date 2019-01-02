@@ -5,43 +5,33 @@
  * DateTime: 01.01.2019 4:48
  */
 
-namespace Environment;
+namespace Environment\Session;
 
 
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class Unlock extends Router
+class Router extends \Environment\Router
 {
-    private $root = '/unlock/';
-    private $point = '{point}/';
+    private $root = '/session/';
 
-    public function __construct(\Slim\App $app)
-    {
-        parent::__construct($app);
-    }
-
-    public function settingUpRoutes(): Routing
+    public function settingUpRoutes(): \Environment\Routing
     {
         $app = $this->getHandler();
         $root = $this->root;
-        $point = $this->point;
 
         $app->post($root, function (Request $request, Response $response, array $arguments) {
             /*
-             * shutter-id
-             * token
+             * email
+             * password
+             * вернёт токен сессии
              * */
             return $response;
         });
-
-        $app->get("$root$point", function (Request $request, Response $response, array $arguments) {
-
-            return $response;
-        });
-
         $app->delete($root, function (Request $request, Response $response, array $arguments) {
-            /* point */
+            /*
+             * token
+             */
             return $response;
         });
         return $this;
