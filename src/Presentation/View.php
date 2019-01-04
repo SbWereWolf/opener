@@ -12,4 +12,6 @@ interface View
 {
 
     public function toJson(): string;
+
+    public function toArray(): array;
 }

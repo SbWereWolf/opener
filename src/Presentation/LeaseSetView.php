@@ -29,8 +29,19 @@ class LeaseSetView implements View
 
     public function toJson(): string
     {
+        $collection = $this->toArray();
+        $result = json_encode($collection);
+
+        return $result;
+    }
+
+    /**
+     * @return array
+     */
+    public function toArray(): array
+    {
         $collection = array();
-        foreach ($this->dataSet->next() as $key => $element) {
+        foreach ($this->dataSet->next() as $element) {
             /** @var ILease $element */
             $record = array(
                 self::FINISH => $element->getFinish(),
@@ -43,8 +54,6 @@ class LeaseSetView implements View
 
             $collection[] = $record;
         }
-        $result = json_encode($collection);
-
-        return $result;
+        return $collection;
     }
 }

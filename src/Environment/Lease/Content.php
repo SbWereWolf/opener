@@ -14,8 +14,8 @@ class Content extends \Environment\Content
 {
     public function attachContent(): \Environment\Output
     {
-        $json = (new LeaseSetView($this->getContent()))->toJson();
-        $response = $this->getResponse()->withJson($json);
+        $asArray = (new LeaseSetView($this->getContent()))->toArray();
+        $response = $this->getResponse()->withJson($asArray);
         $this->setResponse($response);
         return $this;
     }

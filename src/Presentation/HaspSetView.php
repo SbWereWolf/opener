@@ -26,15 +26,27 @@ class HaspSetView implements View
 
     public function toJson(): string
     {
-        $collection = array();
-        foreach ($this->dataSet->next() as $element => $key) {
-            /** @var IHasp $element */
-            $collection[$key][self::ID] = $element->getId();
-            $collection[$key][self::POINT] = $element->getPoint();
-            $collection[$key][self::REMARK] = $element->getRemark();
-        }
+        $collection = $this->toArray();
         $result = json_encode($collection);
 
         return $result;
+    }
+
+    /**
+     * @return array
+     */
+    public function toArray(): array
+    {
+        $collection = array();
+        foreach ($this->dataSet->next() as $element) {
+            /** @var IHasp $element */
+            $record = array(
+                self::ID => $element->getId(),
+                self::POINT => $element->getPoint(),
+                self::REMARK => $element->getRemark(),
+            );
+            $collection[] = $record;
+        }
+        return $collection;
     }
 }
