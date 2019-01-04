@@ -50,8 +50,8 @@ class Controller extends \Environment\Controller
         $dataPath = $this->getDataPath();
         $leaseSet = (new LeaseManager($item, $dataPath))->read();
 
-        $output = (new Output($this->getResponse(), $leaseSet))->setResponse();
-        $response = (new Presentation($this->getResponse(), $output))->fromRead();
+        $output = (new Content($this->getResponse(), $leaseSet))->attachContent();
+        $response = (new Presentation($output->getResponse(), $output))->fromRead();
 
         return $response;
     }
@@ -69,8 +69,8 @@ class Controller extends \Environment\Controller
         $dataPath = $this->getDataPath();
         $leaseSet = (new LeaseManager($item, $dataPath))->create();
 
-        $output = (new Output($this->getResponse(), $leaseSet))->setResponse();
-        $response = (new Presentation($this->getResponse(), $output))->fromCreate();
+        $output = (new Content($this->getResponse(), $leaseSet))->attachContent();
+        $response = (new Presentation($output->getResponse(), $output))->fromCreate();
 
         return $response;
     }
@@ -88,8 +88,8 @@ class Controller extends \Environment\Controller
         $dataPath = $this->getDataPath();
         $leaseSet = (new LeaseManager($item, $dataPath))->update();
 
-        $output = (new Output($this->getResponse(), $leaseSet))->setResponse();
-        $response = (new Presentation($this->getResponse(), $output))->fromUpdate();
+        $output = (new Content($this->getResponse(), $leaseSet))->attachContent();
+        $response = (new Presentation($output->getResponse(), $output))->fromUpdate();
 
         return $response;
     }

@@ -16,7 +16,7 @@ class LeaseHandler
 
     public function __construct(string $dataPath)
     {
-        $this->leaseAccessPath = new LeaseAccess($dataPath);
+        $this->leaseAccess = new LeaseAccess($dataPath);
     }
 
     public function getActual(): ILeaseSet

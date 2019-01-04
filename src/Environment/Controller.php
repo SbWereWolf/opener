@@ -13,11 +13,6 @@ use Environment\IController;
  */
 class Controller implements IController
 {
-    const GET = 'get';
-    const POST = 'post';
-    const PUT = 'put';
-    const DELETE = 'delete';
-
     private $request = null;
     private $response = null;
     private $arguments = array();

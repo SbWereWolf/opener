@@ -9,8 +9,6 @@ namespace Environment\Lease;
 
 
 use Environment\Routing;
-use Latch\CheckInLogbook;
-use Presentation\HaspSetView;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -24,12 +22,24 @@ class Router extends \Environment\Router
         $app = $this->getHandler();
         $root = $this->root;
         $token = $this->token;
-
+        /**
+         * @SWG\Get(
+         *    path="/lease/",
+         *     summary="Browse whole collection of actual lease suggestion",
+         *    description="Lease suggestion with finish time greater than now",
+         *     @SWG\Response(
+         *         response=200,
+         *         description="Successful operation",
+         *         @SWG\Schema(
+         *             type="array",
+         *             @SWG\Items(ref="#/definitions/lease")
+         *         ),
+         *     ),
+         * )
+         */
         $app->get($root, function (Request $request, Response $response, array $arguments) {
-            $haspSet = (new CheckInLogbook())->getActual();
-            $json = (new HaspSetView($haspSet))->toJson();
-
-            $response = $response->withJson($json)->withStatus(200);
+            $response = (new Controller($request, $response, $arguments, Controller::GET, DATA_PATH))
+                ->process();
 
             return $response;
         });
@@ -41,16 +51,32 @@ class Router extends \Environment\Router
              * */
             return $response;
         });
-
+        /**
+         * @SWG\Get(
+         *    path="/lease/{token}/",
+         *     summary="Browse whole collection of session user own leases",
+         *    description="Lease suggestion with finish time greater than now and token equal that given token",
+         *     @SWG\Response(
+         *         response=200,
+         *         description="Successful operation",
+         *         @SWG\Schema(
+         *             type="array",
+         *             @SWG\Items(ref="#/definitions/lease")
+         *         ),
+         *     ),
+         *     @SWG\Parameter(
+         *         name="token",
+         *         in="path",
+         *         type="string",
+         *         description="Token of users session",
+         *         required=true,
+         *     ),
+         * )
+         */
         $app->get("$root$token", function (Request $request, Response $response, array $arguments) {
-            /*
-             * id
-             * user-id
-             * shutter-id
-             * start
-             * finish
-             * occupancy-code
-             * */
+            $response = (new Controller($request, $response, $arguments, Controller::GET, DATA_PATH))
+                ->process();
+
             return $response;
         });
 

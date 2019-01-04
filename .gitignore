@@ -1,3 +1,7 @@
-/.idea/**
-/vendor/**
-/configuration/**
+.idea/**
+vendor/**
+configuration/**
+api/swagger.json
+api/dist/**
+api/.htaccess
+

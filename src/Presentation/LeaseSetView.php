@@ -8,14 +8,17 @@
 namespace Presentation;
 
 
-use Latch\IHasp;
+use Latch\ILease;
 use Latch\ILeaseSet;
 
 class LeaseSetView implements View
 {
     const ID = 'id';
-    const POINT = 'point';
-    const REMARK = 'remark';
+    const USER_ID = 'user-id';
+    const SHUTTER_ID = 'shutter-id';
+    const START = 'start';
+    const FINISH = 'finish';
+    const OCCUPANCY_TYPE_ID = 'occupancy-type-id';
 
     private $dataSet = null;
 
@@ -27,11 +30,18 @@ class LeaseSetView implements View
     public function toJson(): string
     {
         $collection = array();
-        foreach ($this->dataSet->next() as $element => $key) {
-            /** @var IHasp $element */
-            $collection[$key][self::ID] = $element->getId();
-            $collection[$key][self::POINT] = $element->getPoint();
-            $collection[$key][self::REMARK] = $element->getRemark();
+        foreach ($this->dataSet->next() as $key => $element) {
+            /** @var ILease $element */
+            $record = array(
+                self::FINISH => $element->getFinish(),
+                self::ID => $element->getId(),
+                self::OCCUPANCY_TYPE_ID => $element->getOccupancyTypeId(),
+                self::SHUTTER_ID => $element->getShutterId(),
+                self::START => $element->getStart(),
+                self::USER_ID => $element->getUserId(),
+            );
+
+            $collection[] = $record;
         }
         $result = json_encode($collection);
 

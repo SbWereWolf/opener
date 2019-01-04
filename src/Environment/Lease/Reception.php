@@ -20,7 +20,7 @@ class Reception extends \Environment\Reception
     const OCCUPANCY_TYPE_ID = 'occupancy-type-id';
     const TOKEN = 'token';
 
-    private function getToken(): int
+    private function getToken(): string
     {
         $value = $this->getParser()->getStringField(self::TOKEN);
         return $value;
@@ -60,6 +60,34 @@ class Reception extends \Environment\Reception
     {
         $value = $this->getParser()->getIntegerField(self::OCCUPANCY_TYPE_ID);
         return $value;
+    }
+
+    public function toCreate()
+    {
+        $item = $this->setupFromBody();
+
+        return $item;
+    }
+
+    public function toRead()
+    {
+        $item = $this->setupFromPath();
+
+        return $item;
+    }
+
+    public function toDelete()
+    {
+        $item = $this->setupFromPath();
+
+        return $item;
+    }
+
+    public function toUpdate()
+    {
+        $item = $this->setupFromBody();
+
+        return $item;
     }
 
     private function setupFromBody(): Lease

@@ -14,5 +14,5 @@ interface Output
 {
     public function isSuccess();
     public function getResponse():Response;
-    public function setResponse();
+    public function attachContent();
 }

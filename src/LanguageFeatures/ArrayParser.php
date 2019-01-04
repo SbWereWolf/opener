@@ -38,7 +38,7 @@ class ArrayParser
         return $value;
     }
 
-    private function safelyGetByKey(string $key): string
+    private function safelyGetByKey(string $key)
     {
 
         $parameters = $this->parameters;

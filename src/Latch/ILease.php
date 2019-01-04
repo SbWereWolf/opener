@@ -7,7 +7,37 @@
 
 namespace Latch;
 
-
+/**
+ * @SWG\Definition(
+ *   definition="lease",
+ *   type="object",
+ *   description="lease of hasp",
+ *   @SWG\Property(
+ *          property="id",
+ *          type="integer"
+ *   ),
+ *   @SWG\Property(
+ *          property="user_id",
+ *          type="integer"
+ *   ),
+ *   @SWG\Property(
+ *          property="shutter_id",
+ *          type="integer"
+ *   ),
+ *   @SWG\Property(
+ *          property="start",
+ *          type="integer"
+ *   ),
+ *   @SWG\Property(
+ *          property="finish",
+ *          type="integer"
+ *   ),
+ *   @SWG\Property(
+ *          property="occupancy_type_id",
+ *          type="integer"
+ *   )
+ * )
+ */
 interface ILease
 {
     /**
@@ -50,7 +80,7 @@ interface ILease
     public function setStart(int $start): Lease;
 
     /**
-     * @return string
+     * @return int
      */
     public function getStart(): int;
 
@@ -61,7 +91,7 @@ interface ILease
     public function setFinish(int $finish): Lease;
 
     /**
-     * @return string
+     * @return int
      */
     public function getFinish(): int;
 

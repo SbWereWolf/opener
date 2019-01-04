@@ -7,7 +7,21 @@
 
 namespace Environment;
 
-
+/**
+ * @SWG\Swagger(
+ *   schemes={"http"},
+ *   host="local.opener",
+ *   basePath="/",
+ *   produces={"application/json"},
+ *   consumes={"application/json"},
+ *     @SWG\Info(
+ *         version="0.1.0",
+ *         title="opener",
+ *         description="API that uses an opener",
+ *         @SWG\License(name="GPL")
+ *     ),
+ * )
+ */
 class RouteSet
 {
     private $handler = null;
@@ -29,6 +43,7 @@ class RouteSet
         $app = (new \Environment\Session\Router($app))->settingUpRoutes()->getHandler();
         $app = (new \Environment\Unlock\Router($app))->settingUpRoutes()->getHandler();
         $app = (new \Environment\User\Router($app))->settingUpRoutes()->getHandler();
+        $app = (new \Environment\Storage\Router($app))->settingUpRoutes()->getHandler();
 
         return $app;
     }
