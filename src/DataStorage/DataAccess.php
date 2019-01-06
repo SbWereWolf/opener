@@ -15,6 +15,24 @@ class DataAccess
     }
 
     /**
+     * @param $requestText
+     * @return bool
+     */
+    protected function processUpdate(\PDOStatement $request): DataAccess
+    {
+        $isSuccess = $request->execute();
+
+        if ($isSuccess) {
+            $this->setSuccessStatus();
+        }
+
+        if (!$isSuccess) {
+            $this->setFailStatus();
+        }
+
+        return $this;
+    }
+    /**
      * @return \PDO
      */
     protected function getDbConnection(): \PDO
@@ -33,16 +51,9 @@ class DataAccess
         $this->status = false;
     }
 
-    public function isSuccess()
+    protected function isSuccess()
     {
         return $this->status == true;
 
     }
-
-    public function isFail()
-    {
-        return $this->status == false;
-
-    }
-
 }

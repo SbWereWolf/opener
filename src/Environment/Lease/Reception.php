@@ -3,6 +3,7 @@
 namespace Environment\Lease;
 
 use LanguageFeatures\ArrayParser;
+use Latch\ILease;
 use Latch\Lease;
 
 /**
@@ -62,35 +63,38 @@ class Reception extends \Environment\Reception
         return $value;
     }
 
-    public function toCreate()
+    public function toCreate(): ILease
     {
         $item = $this->setupFromBody();
 
         return $item;
     }
 
-    public function toRead()
+    /**
+     * @return Lease
+     */
+    public function toRead(): ILease
     {
         $item = $this->setupFromPath();
 
         return $item;
     }
 
-    public function toDelete()
+    public function toDelete(): ILease
     {
         $item = $this->setupFromPath();
 
         return $item;
     }
 
-    public function toUpdate()
+    public function toUpdate(): ILease
     {
         $item = $this->setupFromBody();
 
         return $item;
     }
 
-    private function setupFromBody(): Lease
+    private function setupFromBody(): ILease
     {
         $body = $this->getRequest()->getParsedBody();
         $this->setParser(new ArrayParser($body));
@@ -100,7 +104,7 @@ class Reception extends \Environment\Reception
         return $lease;
     }
 
-    private function setupFromPath(): Lease
+    private function setupFromPath(): ILease
     {
         $this->setParser(new ArrayParser($this->getArguments()));
 
@@ -109,7 +113,7 @@ class Reception extends \Environment\Reception
         return $lease;
     }
 
-    private function setUpLease(): Lease
+    private function setUpLease(): ILease
     {
         $id = $this->getId();
         $userId = $this->getUserId();

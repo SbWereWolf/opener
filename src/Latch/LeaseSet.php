@@ -8,16 +8,22 @@
 namespace Latch;
 
 
-class LeaseSet implements ILeaseSet
+class LeaseSet implements Content
 {
     private $collection = array();
     private $status = false;
 
-    public function push(ILease $element): bool
+    public function push($element): bool
     {
-        $this->collection[] = $element;
-        return true;
+        $result = false;
 
+        $isValid = $element instanceof ILease;
+        if ($isValid) {
+            $this->collection[] = $element;
+            $result = true;
+        }
+
+        return $result;
     }
 
     public function next()
@@ -34,7 +40,9 @@ class LeaseSet implements ILeaseSet
     public function setFailStatus(){
         $this->status = false;
     }
-    public function isSuccess(){
+
+    public function isSuccess(): bool
+    {
         return $this->status == true;
 
     }

@@ -4,7 +4,6 @@ namespace Environment;
 
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Environment\IController;
 
 /**
  * city-call
@@ -16,14 +15,12 @@ class Controller implements IController
     private $request = null;
     private $response = null;
     private $arguments = array();
-    private $method = '';
     private $dataPath = '';
 
     function __construct(Request $request, Response $response, array $parametersInPath, string $method, string $dataPath)
     {
         $this->setArguments($parametersInPath)
             ->setDataPath($dataPath)
-            ->setMethod($method)
             ->setRequest($request)
             ->setResponse($response);
     }
@@ -71,24 +68,6 @@ class Controller implements IController
     protected function getArguments(): array
     {
         return $this->arguments;
-    }
-
-    /**
-     * @param string $method
-     * @return Controller
-     */
-    protected function setMethod(string $method): Controller
-    {
-        $this->method = $method;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    protected function getMethod(): string
-    {
-        return $this->method;
     }
 
     /**

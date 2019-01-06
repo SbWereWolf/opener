@@ -2,7 +2,6 @@
 
 namespace Environment;
 
-use Slim\Http\Request;
 use Slim\Http\Response;
 
 /**
@@ -10,12 +9,7 @@ use Slim\Http\Response;
  * Copyright © 2018 Volkhin Nikolay
  * 25.06.18 21:53
  */
-interface IController
+interface IController extends HttpMethod
 {
-    const GET = 'get';
-    const POST = 'post';
-    const PUT = 'put';
-    const DELETE = 'delete';
-
     public function process(): Response;
 }

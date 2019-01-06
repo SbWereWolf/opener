@@ -13,7 +13,7 @@ class LeaseManager
     private $lease = null;
     private $dataPath = '';
 
-    public function __construct(Lease $lease, string $dataPath)
+    public function __construct(ILease $lease, string $dataPath)
     {
         $this->setDataPath($dataPath)
             ->setLease($lease);
@@ -30,7 +30,7 @@ class LeaseManager
     }
 
 
-    public function getLease():Lease
+    public function getLease(): ILease
     {
         return $this->lease;
     }
@@ -53,13 +53,14 @@ class LeaseManager
         return $this->dataPath;
     }
 
-    public function read():ILeaseSet{
+    public function read(): Content
+    {
 
         $lease = $this->getLease();
         $isExists = !empty($lease->getToken());
 
         $dataPath = $this->getDataPath();
-        $result = null;
+        $result = new LeaseSet();
         if($isExists){
             $result = (new LeaseHandler($dataPath))->getCurrent($lease);
         }
@@ -69,12 +70,26 @@ class LeaseManager
 
         return $result;
     }
-    public function create():ILeaseSet{
 
-        return new LeaseSet();
+    public function create(): Content
+    {
+
+        $lease = $this->getLease();
+
+        $dataPath = $this->getDataPath();
+        $result = (new LeaseHandler($dataPath))->registerLease($lease);
+
+        return $result;
     }
-    public function update():ILeaseSet{
 
-        return new LeaseSet();
+    public function update(): Content
+    {
+
+        $lease = $this->getLease();
+
+        $dataPath = $this->getDataPath();
+        $result = (new LeaseHandler($dataPath))->overrideLease($lease);
+
+        return $result;
     }
 }

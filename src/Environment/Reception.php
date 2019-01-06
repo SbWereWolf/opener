@@ -28,9 +28,7 @@ class Reception implements IReception
      */
     public function toCreate()
     {
-        $item = $this->setupFromBody();
-
-        return $item;
+        throw new \Exception('Method toCreate() Not Implemented');
     }
 
     /**
@@ -38,9 +36,7 @@ class Reception implements IReception
      */
     public function toRead()
     {
-        $item = $this->setupFromPath();
-
-        return $item;
+        throw new \Exception('Method toRead() Not Implemented');
     }
 
     /**
@@ -48,9 +44,7 @@ class Reception implements IReception
      */
     public function toDelete()
     {
-        $item = $this->setupFromPath();
-
-        return $item;
+        throw new \Exception('Method toDelete() Not Implemented');
     }
 
     /**
@@ -58,25 +52,7 @@ class Reception implements IReception
      */
     public function toUpdate()
     {
-        $item = $this->setupFromBody();
-
-        return $item;
-    }
-
-    /**
-     * @throws \Exception
-     */
-    private function setupFromBody()
-    {
-        throw new \Exception('Method setupFromBody() Not Implemented');
-    }
-
-    /**
-     * @throws \Exception
-     */
-    private function setupFromPath()
-    {
-        throw new \Exception('Method setupFromPath() Not Implemented');
+        throw new \Exception('Method toUpdate() Not Implemented');
     }
 
     /**

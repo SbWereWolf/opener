@@ -8,8 +8,8 @@
 namespace Presentation;
 
 
+use Latch\Content;
 use Latch\ILease;
-use Latch\ILeaseSet;
 
 class LeaseSetView implements View
 {
@@ -20,9 +20,10 @@ class LeaseSetView implements View
     const FINISH = 'finish';
     const OCCUPANCY_TYPE_ID = 'occupancy-type-id';
 
+    /** @var Content */
     private $dataSet = null;
 
-    public function __construct(ILeaseSet $dataSet)
+    public function __construct(Content $dataSet)
     {
         $this->dataSet = $dataSet;
     }

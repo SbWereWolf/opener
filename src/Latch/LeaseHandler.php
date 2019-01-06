@@ -19,7 +19,7 @@ class LeaseHandler
         $this->leaseAccess = new LeaseAccess($dataPath);
     }
 
-    public function getActual(): ILeaseSet
+    public function getActual(): Content
     {
         $result = $this->getLeaseAccess()->getActual()->getData();
         return $result;
@@ -33,9 +33,21 @@ class LeaseHandler
         return $this->leaseAccess;
     }
 
-    public function getCurrent(Lease $lease): ILeaseSet
+    public function getCurrent(ILease $lease): Content
     {
         $result = $this->getLeaseAccess()->getCurrent($lease)->getData();
+        return $result;
+    }
+
+    public function registerLease(ILease $lease): Content
+    {
+        $result = $this->getLeaseAccess()->insert($lease)->getData();
+        return $result;
+    }
+
+    public function overrideLease(ILease $lease): Content
+    {
+        $result = $this->getLeaseAccess()->update($lease)->getData();
         return $result;
     }
 }

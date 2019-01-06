@@ -8,10 +8,10 @@
 namespace Latch;
 
 
-interface ILeaseSet
+interface Content
 {
 
-    public function push(ILease $element): bool;
+    public function push($element): bool;
 
     /**
      * @return \Latch\ILease
@@ -22,5 +22,5 @@ interface ILeaseSet
 
     public function setFailStatus();
 
-    public function isSuccess();
+    public function isSuccess(): bool;
 }

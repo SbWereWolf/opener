@@ -3,7 +3,6 @@
 namespace Environment\Lease;
 
 
-use Environment\Presentation;
 use Latch\LeaseManager;
 use Slim\Http\Response;
 
@@ -20,7 +19,7 @@ class Controller extends \Environment\Controller
         $arguments = $this->getArguments();
         $reception = new  Reception($request, $arguments);
 
-        $method = $this->getMethod();
+        $method = $request->getMethod();
         $response = $this->getResponse();
         switch ($method) {
             case self::GET:
@@ -40,18 +39,15 @@ class Controller extends \Environment\Controller
     /**
      * @param Reception $reception
      * @return Response
-     * @throws \Exception
      */
     private function read(Reception $reception): Response
     {
-        /** @var \Latch\Lease $item */
-        $item = $reception->toRead();
+        /** @var \Latch\Lease $pattern */
+        $pattern = $reception->toRead();
 
-        $dataPath = $this->getDataPath();
-        $leaseSet = (new LeaseManager($item, $dataPath))->read();
+        $leaseSet = (new LeaseManager($pattern, $this->getDataPath()))->read();
 
-        $output = (new Content($this->getResponse(), $leaseSet))->attachContent();
-        $response = (new Presentation($output->getResponse(), $output))->fromRead();
+        $response = (new Presentation($this->getRequest(), $this->getResponse(), $leaseSet))->process();
 
         return $response;
     }
@@ -66,11 +62,9 @@ class Controller extends \Environment\Controller
         /** @var \Latch\Lease $item */
         $item = $reception->toCreate();
 
-        $dataPath = $this->getDataPath();
-        $leaseSet = (new LeaseManager($item, $dataPath))->create();
+        $leaseSet = (new LeaseManager($item, $this->getDataPath()))->create();
 
-        $output = (new Content($this->getResponse(), $leaseSet))->attachContent();
-        $response = (new Presentation($output->getResponse(), $output))->fromCreate();
+        $response = (new Presentation($this->getRequest(), $this->getResponse(), $leaseSet))->process();
 
         return $response;
     }
@@ -85,11 +79,9 @@ class Controller extends \Environment\Controller
         /** @var \Latch\Lease $item */
         $item = $reception->toUpdate();
 
-        $dataPath = $this->getDataPath();
-        $leaseSet = (new LeaseManager($item, $dataPath))->update();
+        (new LeaseManager($item, $this->getDataPath()))->update();
 
-        $output = (new Content($this->getResponse(), $leaseSet))->attachContent();
-        $response = (new Presentation($output->getResponse(), $output))->fromUpdate();
+        $response = (new Presentation($this->getRequest(), $this->getResponse(), $leaseSet))->process();
 
         return $response;
     }

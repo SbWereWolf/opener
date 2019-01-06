@@ -1,121 +1,105 @@
 <?php
+/**
+ * Copyright © 2019 Volkhin Nikolay
+ * Project: opener
+ * DateTime: 03.01.2019 1:09
+ */
 
 namespace Environment;
 
+
+use Latch\Content;
+use Slim\Http\Request;
 use Slim\Http\Response;
 
-/**
- * city-call
- * Copyright © 2018 Volkhin Nikolay
- * 25.06.18 21:52
- */
-class Presentation implements IPresentation
+class Presentation implements \Environment\IPresentation
 {
-
+    /** @var Content $content */
+    private $content = null;
+    /** @var Response $response */
     private $response = null;
-    private $output = null;
+    /** @var Request $request */
+    private $request;
 
-    function __construct(Response $response, Output $output)
+    public function __construct(Request $request, Response $response, Content $content)
     {
-        $this->setOutput($output)
-            ->setResponse($response);
-    }
-
-    public function fromCreate(): Response
-    {
-        $response = $this->setupByMethod(self::POST);
-
-        return $response;
-    }
-
-    private function setupByMethod(string $method): Response
-    {
-        $response = $this->getOutput()->getResponse();
-        $statusCode = $this->getStatusCode($method);
-        $response = $response->withStatus($statusCode);
-
-        return $response;
+        $this->setContent($content)
+            ->setResponse($response)
+            ->setRequest($request);
     }
 
     /**
-     * @return null
-     */
-    protected function getOutput(): Output
-    {
-        return $this->output;
-    }
-
-    /**
-     * @param null $output
+     * @param array $content
      * @return Presentation
      */
-    protected function setOutput(Output $output)
+    private function setContent(Content $content): \Environment\IPresentation
     {
-        $this->output = $output;
+        $this->content = $content;
         return $this;
     }
 
-    private function getStatusCode(string $method): int
+    protected function isSuccess(): bool
     {
-        $isSuccess = $this->getOutput()->isSuccess();
-        if (!$isSuccess) {
-            $statusCode = self::ERROR;
-        }
-        if ($isSuccess) {
-            switch ($method) {
-                case self::POST :
-                    $statusCode = self::POST_OK;
-                    break;
-                case self::GET:
-                    $statusCode = self::COMMON_OK;
-                    break;
-                case self::PUT:
-                    $statusCode = self::COMMON_OK;
-                    break;
-                case self::DELETE:
-                    $statusCode = self::DELETE_OK;
-                    break;
-            }
-        }
-        return $statusCode;
+        return $this->getContent()->isSuccess();
+    }
+
+    public function getResponse(): Response
+    {
+        return $this->response;
     }
 
     /**
-     * @return Response
+     * @return IPresentation
+     * @throws \Exception
      */
-    protected function getResponse(): Response
+    public function process(): Response
     {
-        return $this->response;
+        throw new \Exception('Method process() Not Implemented');
+    }
+
+    /**
+     * @return bool
+     */
+    protected function shouldAttach(): bool
+    {
+        $method = $this->getRequest()->getMethod();
+        $shouldAttach = $method == HttpMethod::GET || $method == HttpMethod::PUT;
+        return $shouldAttach;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getContent(): Content
+    {
+        return $this->content;
     }
 
     /**
      * @param Response $response
      * @return Presentation
      */
-    protected function setResponse(Response $response): Presentation
+    protected function setResponse(Response $response): \Environment\IPresentation
     {
         $this->response = $response;
         return $this;
     }
 
-    public function fromRead(): Response
+    /**
+     * @return Request
+     */
+    public function getRequest(): Request
     {
-        $response = $this->setupByMethod(self::GET);
-
-        return $response;
+        return $this->request;
     }
 
-    public function fromDelete(): Response
+    /**
+     * @param Request $request
+     * @return Presentation
+     */
+    public function setRequest(Request $request): Presentation
     {
-        $response = $this->setupByMethod(self::DELETE);
-
-        return $response;
-    }
-
-    public function fromUpdate(): Response
-    {
-        $response = $this->setupByMethod(self::PUT);
-
-        return $response;
+        $this->request = $request;
+        return $this;
     }
 }
