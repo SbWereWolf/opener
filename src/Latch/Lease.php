@@ -22,7 +22,7 @@ class Lease implements ILease
      * @param int $id
      * @return Lease
      */
-    public function setId(int $id): Lease
+    public function setId(int $id): self
     {
         $this->id = $id;
         return $this;
@@ -40,7 +40,7 @@ class Lease implements ILease
      * @param int $userId
      * @return Lease
      */
-    public function setUserId(int $userId): Lease
+    public function setUserId(int $userId): self
     {
         $this->userId = $userId;
         return $this;
@@ -58,7 +58,7 @@ class Lease implements ILease
      * @param int $shutterId
      * @return Lease
      */
-    public function setShutterId(int $shutterId): Lease
+    public function setShutterId(int $shutterId): self
     {
         $this->shutterId = $shutterId;
         return $this;
@@ -76,7 +76,7 @@ class Lease implements ILease
      * @param string $start
      * @return Lease
      */
-    public function setStart(int $start): Lease
+    public function setStart(int $start): self
     {
         $this->start = $start;
         return $this;
@@ -94,7 +94,7 @@ class Lease implements ILease
      * @param string $finish
      * @return Lease
      */
-    public function setFinish(int $finish): Lease
+    public function setFinish(int $finish): self
     {
         $this->finish = $finish;
         return $this;
@@ -112,7 +112,7 @@ class Lease implements ILease
      * @param int $occupancyTypeId
      * @return Lease
      */
-    public function setOccupancyTypeId(int $occupancyTypeId): Lease
+    public function setOccupancyTypeId(int $occupancyTypeId): self
     {
         $this->occupancyTypeId = $occupancyTypeId;
         return $this;
@@ -130,7 +130,7 @@ class Lease implements ILease
      * @param string $token
      * @return Lease
      */
-    public function setToken(string $token): Lease
+    public function setToken(string $token): self
     {
         $this->token = $token;
         return $this;

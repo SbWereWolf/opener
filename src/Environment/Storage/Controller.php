@@ -151,7 +151,7 @@ drop index IF EXISTS user_role_user_id_role_id_uindex;
 
     public function process(): Response
     {
-        $method = $this->getMethod();
+        $method = $this->getRequest()->getMethod();
         $response = $this->getResponse();
         switch ($method) {
             case self::POST:

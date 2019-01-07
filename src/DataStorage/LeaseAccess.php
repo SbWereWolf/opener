@@ -13,22 +13,79 @@ class LeaseAccess extends DataAccess
 {
     private $data = null;
 
+    public function isLeasePossible(ILease $lease): self
+    {
+        $requestText = '
+SELECT
+    NULL AS is_possible
+WHERE
+EXISTS
+    (
+  SELECT
+      NULL
+  FROM
+       renting
+  WHERE
+      shutter_id = :SHUTTER_ID
+    )
+  AND NOT EXISTS (
+            SELECT
+                NULL
+            FROM
+                 lease
+            WHERE
+                (:ID = 0 OR id <> :ID)
+                AND shutter_id = :SHUTTER_ID
+                AND (start < :START AND finish > :START)
+                AND (start < :FINISH AND finish > :FINISH)
+    )
+;
+   ';
+        $request = $this->prepareRequest($requestText);
+
+        $id = $lease->getId();
+        $shutterId = $lease->getShutterId();
+        $start = $lease->getStart();
+        $finish = $lease->getFinish();
+
+        $request->bindValue(':ID', $id, \PDO::PARAM_INT);
+        $request->bindValue(':SHUTTER_ID', $shutterId, \PDO::PARAM_INT);
+        $request->bindValue(':START', $start, \PDO::PARAM_INT);
+        $request->bindValue(':FINISH', $finish, \PDO::PARAM_INT);
+
+        $this->processSelect($request);
+
+        return $this;
+    }
+
     public function getActual(): self
     {
         $requestText = '
 SELECT
-       id,
-       user_id,
-       shutter_id,
-       start,
-       finish,
-       occupancy_type_id
+       lo.id                AS id,
+       lo.user_id           AS user_id,
+       lo.shutter_id        AS shutter_id,
+       lo.start             AS start,
+       lo.finish            AS finish,
+       lo.occupancy_type_id AS occupancy_type_id
 FROM
-     lease
+     renting ro
+     join lease lo
+     on lo.shutter_id = ro.shutter_id
 WHERE
-    finish>strftime(\'%s\',\'now\')
-    OR finish is NULL
-    OR finish = 0;
+    NOT EXISTS (
+          SELECT
+              NULL
+          FROM
+               renting ri
+               join lease li
+               on li.shutter_id = ri.shutter_id
+          WHERE
+              li.id = lo.id
+            AND li.start < strftime(\'%s\', \'now\')
+            AND strftime(\'%s\', \'now\') < li.finish
+        )
+;
    ';
         $request = $this->prepareRequest($requestText);
         $this->processSelect($request);
@@ -42,7 +99,7 @@ WHERE
      */
     private function prepareRequest($requestText)
     {
-        $dbConnection = $this->getDbConnection();
+        $dbConnection = $this->getAccess();
         $request = $dbConnection->prepare($requestText);
         return $request;
     }
@@ -56,9 +113,15 @@ WHERE
         $isSuccess = $request->execute();
 
         if ($isSuccess) {
-            $this->setSuccessStatus();
             $dataSet = $request->fetchAll(\PDO::FETCH_ASSOC);
-            $isSuccess = $this->parseOutput($dataSet);
+
+            $rowCount = $request->rowCount();
+            $this->setRowCount($rowCount);
+
+            $data = $this->parseOutput($dataSet);
+            $this->setData($data);
+
+            $this->setSuccessStatus();
         }
 
         if (!$isSuccess) {
@@ -72,7 +135,7 @@ WHERE
      * @param $dataSet
      * @return bool
      */
-    private function parseOutput(array $dataSet): bool
+    private function parseOutput(array $dataSet): Content
     {
         $result = new LeaseSet();
         foreach ($dataSet as $dataRow) {
@@ -104,9 +167,7 @@ WHERE
             $result->setFailStatus();
         }
 
-        $this->setData($result);
-
-        return true;
+        return $result;
     }
 
     public function insert(ILease $lease): self
@@ -205,15 +266,18 @@ SELECT
        l.finish AS finish,
        l.occupancy_type_id AS occupancy_type_id
 FROM
-       session s
-       join lease l
-       on l.user_id = s.user_id
+       lease l
 WHERE
-       s.token = :TOKEN
-       AND s.finish>strftime(\'%s\',\'now\')
+       EXISTS(
+         SELECT 
+             NULL 
+         FROM 
+              session 
+         WHERE 
+             token = :TOKEN 
+           AND finish>strftime(\'%s\',\'now\')
+           )
        AND l.finish>strftime(\'%s\',\'now\')
-       OR l.finish is NULL
-       OR l.finish = 0)
 ;
    ';
         $request = $this->prepareRequest($requestText);

@@ -23,7 +23,7 @@ class Router extends \Environment\Router
         /**
          * @SWG\Post(
          *     path="/storage/install/",
-         *     summary="Create an database",
+         *     summary="Create a database",
          *     description="Creates all tables",
          *     @SWG\Response(
          *         response=201,
@@ -32,7 +32,7 @@ class Router extends \Environment\Router
          * )
          */
         $app->post("$root/install/", function (Request $request, Response $response, array $arguments) {
-            $response = (new Controller($request, $response, $arguments, Controller::POST, DATA_PATH))
+            $response = (new Controller($request, $response, $arguments, DATA_PATH))
                 ->process();
 
             return $response;
@@ -49,7 +49,7 @@ class Router extends \Environment\Router
          * )
          */
         $app->delete("$root/dismount/", function (Request $request, Response $response, array $arguments) {
-            $response = (new Controller($request, $response, $arguments, Controller::DELETE, DATA_PATH))
+            $response = (new Controller($request, $response, $arguments, DATA_PATH))
                 ->process();
 
             return $response;

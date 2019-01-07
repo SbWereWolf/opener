@@ -5,25 +5,64 @@ namespace DataStorage;
 
 class DataAccess
 {
-    private $dsn = '';
+    private $access = null;
     private $status = false;
+    private $rowCount = 0;
 
-    function __construct(string $dataPath)
+    function __construct(\PDO $access)
     {
-        $this->dsn = "sqlite:$dataPath";
-        $this->setSuccessStatus();
+        $this->setAccess($access)
+            ->setSuccessStatus();
+    }
+
+    /**
+     * @param \PDO $access
+     * @return DataAccess
+     */
+    private function setAccess(\PDO $access): self
+    {
+        $this->access = $access;
+        return $this;
+    }
+
+    /**
+     * @param int $rowCount
+     * @return DataAccess
+     */
+    protected function setRowCount(int $rowCount): self
+    {
+        $this->rowCount = $rowCount;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getRowCount(): int
+    {
+        return $this->rowCount;
+    }
+
+    /**
+     * @return null
+     */
+    protected function getAccess(): \PDO
+    {
+        return $this->access;
     }
 
     /**
      * @param $requestText
-     * @return bool
+     * @return DataAccess
      */
-    protected function processUpdate(\PDOStatement $request): DataAccess
+    protected function processUpdate(\PDOStatement $request): self
     {
         $isSuccess = $request->execute();
 
         if ($isSuccess) {
             $this->setSuccessStatus();
+            $rowCount = $request->rowCount();
+            $this->setRowCount($rowCount);
         }
 
         if (!$isSuccess) {
@@ -32,26 +71,22 @@ class DataAccess
 
         return $this;
     }
-    /**
-     * @return \PDO
-     */
-    protected function getDbConnection(): \PDO
-    {
-        $dbConnection = new \PDO($this->dsn);
-        return $dbConnection;
-    }
 
-    protected function setSuccessStatus()
+    protected function setSuccessStatus(): self
     {
         $this->status = true;
+
+        return $this;
     }
 
-    protected function setFailStatus()
+    protected function setFailStatus(): self
     {
         $this->status = false;
+
+        return $this;
     }
 
-    protected function isSuccess()
+    protected function isSuccess(): bool
     {
         return $this->status == true;
 

@@ -11,31 +11,56 @@ namespace Latch;
  * @SWG\Definition(
  *   definition="lease",
  *   type="object",
- *   description="lease of hasp",
+ *   description="lease of latch",
  *   @SWG\Property(
- *          property="id",
- *          type="integer"
+ *       property="user-id",
+ *       type="integer",
  *   ),
  *   @SWG\Property(
- *          property="user_id",
- *          type="integer"
+ *       property="shutter-id",
+ *       type="integer",
  *   ),
  *   @SWG\Property(
- *          property="shutter_id",
- *          type="integer"
+ *       property="start",
+ *       type="integer",
  *   ),
  *   @SWG\Property(
- *          property="start",
- *          type="integer"
+ *       property="finish",
+ *       type="integer",
  *   ),
  *   @SWG\Property(
- *          property="finish",
- *          type="integer"
+ *       property="occupancy-type-id",
+ *       type="integer",
+ *   ),
+ * )
+ * @SWG\Definition(
+ *   definition="lease-with-id",
+ *   type="object",
+ *   description="lease of latch",
+ *   @SWG\Property(
+ *       property="id",
+ *       type="integer",
  *   ),
  *   @SWG\Property(
- *          property="occupancy_type_id",
- *          type="integer"
- *   )
+ *       property="user-id",
+ *       type="integer",
+ *   ),
+ *   @SWG\Property(
+ *       property="shutter-id",
+ *       type="integer",
+ *   ),
+ *   @SWG\Property(
+ *       property="start",
+ *       type="integer",
+ *   ),
+ *   @SWG\Property(
+ *       property="finish",
+ *       type="integer",
+ *   ),
+ *   @SWG\Property(
+ *       property="occupancy-type-id",
+ *       type="integer",
+ *   ),
  * )
  */
 interface ILease

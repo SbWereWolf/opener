@@ -17,7 +17,7 @@ class Controller implements IController
     private $arguments = array();
     private $dataPath = '';
 
-    function __construct(Request $request, Response $response, array $parametersInPath, string $method, string $dataPath)
+    function __construct(Request $request, Response $response, array $parametersInPath, string $dataPath)
     {
         $this->setArguments($parametersInPath)
             ->setDataPath($dataPath)

@@ -79,7 +79,7 @@ class Controller extends \Environment\Controller
         /** @var \Latch\Lease $item */
         $item = $reception->toUpdate();
 
-        (new LeaseManager($item, $this->getDataPath()))->update();
+        $leaseSet = (new LeaseManager($item, $this->getDataPath()))->update();
 
         $response = (new Presentation($this->getRequest(), $this->getResponse(), $leaseSet))->process();
 
