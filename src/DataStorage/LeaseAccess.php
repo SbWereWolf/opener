@@ -94,20 +94,16 @@ WHERE
     }
 
     /**
-     * @param $requestText
+     * @param string $requestText
      * @return bool|\PDOStatement
      */
-    private function prepareRequest($requestText)
+    private function prepareRequest(string $requestText)
     {
         $dbConnection = $this->getAccess();
         $request = $dbConnection->prepare($requestText);
         return $request;
     }
 
-    /**
-     * @param $requestText
-     * @return bool
-     */
     private function processSelect(\PDOStatement $request): self
     {
         $isSuccess = $request->execute();
@@ -132,8 +128,8 @@ WHERE
     }
 
     /**
-     * @param $dataSet
-     * @return bool
+     * @param array $dataSet
+     * @return Content
      */
     private function parseOutput(array $dataSet): Content
     {
@@ -295,10 +291,7 @@ WHERE
         return $this->data;
     }
 
-    /**
-     * @param null $data
-     */
-    private function setData($data): self
+    private function setData(Content $data): self
     {
         $this->data = $data;
         return $this;

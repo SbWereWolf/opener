@@ -5,7 +5,7 @@
  * DateTime: 01.01.2019 5:17
  */
 
-namespace DataStorage;
+namespace Latch;
 
 
 class User implements IUser
@@ -14,33 +14,20 @@ class User implements IUser
     private $id = 0;
     private $email = '';
     private $secret = '';
-    private $table = "'user'";
 
-    /**
-     * @param int $id
-     * @return User
-     */
-    public function setId($id): User
+    public function setId($id): IUser
     {
         $this->id = intval($id);
         return $this;
     }
 
-    /**
-     * @param string $email
-     * @return User
-     */
-    public function setEmail($email): User
+    public function setEmail($email): IUser
     {
         $this->email = strval($email);
         return $this;
     }
 
-    /**
-     * @param string $secret
-     * @return User
-     */
-    public function setSecret($secret): User
+    public function setSecret($secret): IUser
     {
         $this->secret = strval($secret);
         return $this;
@@ -69,14 +56,4 @@ class User implements IUser
     {
         return $this->secret;
     }
-
-    /**
-     * @return string
-     */
-    public function getTable(): string
-    {
-        return $this->table;
-    }
-
-
 }

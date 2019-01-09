@@ -78,7 +78,7 @@ class LeaseHandler extends DataHandler
             $isPossible = $this->getLeaseAccess()->getRowCount() > 0;
 
             if ($isPossible) {
-                $this->getLeaseAccess()->update($lease)->getData();
+                $this->getLeaseAccess()->update($lease);
             }
 
             $this->commit();

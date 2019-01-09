@@ -126,8 +126,17 @@ CREATE TABLE IF NOT EXISTS user_role
 
 create unique index IF NOT EXISTS user_role_user_id_role_id_uindex
   on user_role (user_id, role_id);
+  
+CREATE TABLE IF NOT EXISTS renting
+(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    shutter_id INTEGER,
+    CONSTRAINT renting_shutter_id_fk FOREIGN KEY (shutter_id) REFERENCES shutter (id)
+);
+CREATE UNIQUE INDEX IF NOT EXISTS renting_shutter_id_uindex ON renting (shutter_id);
     ';
     const UNMOUNT = '
+drop table IF EXISTS renting;
 drop table IF EXISTS lease;
 drop table IF EXISTS occupancy_type;
 drop table IF EXISTS session;
@@ -137,6 +146,7 @@ drop table IF EXISTS user_role;
 drop table IF EXISTS role;
 drop table IF EXISTS "user";
 
+drop index IF EXISTS renting_shutter_id_uindex;
 drop index IF EXISTS occupancy_type_code_uindex;
 drop index IF EXISTS role_code_uindex;
 drop index IF EXISTS shutter_point_id_index;

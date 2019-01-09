@@ -47,7 +47,7 @@ class Router extends \Environment\Router
          * @SWG\Post(
          *    path="/lease/",
          *     summary="Create lease",
-         *    description="Redefine properties of lease",
+         *    description="Create new lease",
          *     @SWG\Response(
          *         response=201,
          *         description="Successful operation",

@@ -63,7 +63,7 @@ class Presentation implements \Environment\IPresentation
     protected function shouldAttach(): bool
     {
         $method = $this->getRequest()->getMethod();
-        $shouldAttach = $method == HttpMethod::GET || $method == HttpMethod::PUT;
+        $shouldAttach = $method == HttpMethod::GET || $method == HttpMethod::POST;
         return $shouldAttach;
     }
 

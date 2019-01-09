@@ -8,6 +8,8 @@
 namespace Latch;
 
 
+use DataStorage\LeaseHandler;
+
 class LeaseManager
 {
     private $lease = null;
@@ -23,7 +25,7 @@ class LeaseManager
      * @param null $lease
      * @return LeaseManager
      */
-    public function setLease($lease)
+    public function setLease($lease): self
     {
         $this->lease = $lease;
         return $this;
@@ -39,7 +41,7 @@ class LeaseManager
      * @param string $dataPath
      * @return LeaseManager
      */
-    public function setDataPath(string $dataPath): LeaseManager
+    public function setDataPath(string $dataPath): self
     {
         $this->dataPath = $dataPath;
         return $this;

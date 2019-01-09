@@ -3,6 +3,10 @@
 namespace Environment\User;
 
 
+use LanguageFeatures\ArrayParser;
+use Latch\IUser;
+use Latch\User;
+
 /**
  * city-call
  * Copyright © 2018 Volkhin Nikolay
@@ -14,77 +18,55 @@ class Reception extends \Environment\Reception
     const EMAIL = 'email';
     const SECRET = 'secret';
 
-    private static function getId(ArrayParser $parser): string
+    private function getId(): int
     {
-        $value = $parser->getStringField(self::ID);
+        $value = $this->getParser()->getIntegerField(self::ID);
         return $value;
     }
 
-    private static function getEmail(ArrayParser $parser): float
+    private function getEmail(): int
     {
-        $value = $parser->getFloatField(self::EMAIL);
+        $value = $this->getParser()->getIntegerField(self::EMAIL);
         return $value;
     }
 
-    private static function getSecret(ArrayParser $parser): string
+    private function getSecret(): int
     {
-        $value = $parser->getStringField(self::SECRET);
+        $value = $this->getParser()->getIntegerField(self::SECRET);
         return $value;
     }
 
-    public function toCreate(): Item
+    /**
+     * @return IUser
+     */
+    public function toCreate(): IUser
     {
         $item = $this->setupFromBody();
 
         return $item;
     }
 
-    public function toRead(): Item
+    private function setupFromBody(): IUser
     {
-        $item = $this->setupFromPath();
+        $body = $this->getRequest()->getParsedBody();
+        $this->setParser(new ArrayParser($body));
 
-        return $item;
+        $user = $this->setUpUser();
+
+        return $user;
     }
 
-    public function toDelete(): Item
+    private function setUpUser(): IUser
     {
-        $item = $this->setupFromPath();
+        $id = $this->getId();
+        $email = $this->getEmail();
+        $secret = $this->getSecret();
 
-        return $item;
-    }
+        $user = (new User())
+            ->setId($id)
+            ->setEmail($email)
+            ->setSecret($secret);
 
-    public function toUpdate(): Item
-    {
-        $item = $this->setupFromBody();
-
-        return $item;
-    }
-
-    private function setupFromBody(): Item
-    {
-        $body = $this->request->getParsedBody();
-        $parser = new ArrayParser($body);
-
-        $title = self::getId($parser);
-        $price = self::getEmail($parser);
-        $description = self::getSecret($parser);
-
-        $item = (new Item())
-            ->setTitle($title)
-            ->setPrice($price)
-            ->setDescription($description);
-
-        return $item;
-    }
-
-    private function setupFromPath(): Item
-    {
-        $arguments = $this->arguments;
-        $parser = new ArrayParser($arguments);
-
-        $article = self::getArticle($parser);
-        $item = (new Item())->setArticle($article);
-
-        return $item;
+        return $user;
     }
 }

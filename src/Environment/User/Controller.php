@@ -3,8 +3,8 @@
 namespace Environment\User;
 
 
+use Latch\UserManager;
 use Slim\Http\Response;
-use Environment\IController;
 
 /**
  * city-call
@@ -19,44 +19,13 @@ class Controller extends \Environment\Controller
         $arguments = $this->getArguments();
         $reception = new  Reception($request, $arguments);
 
-        $method = $this->getMethod();
+        $method = $request->getMethod();
         $response = $this->getResponse();
         switch ($method) {
-            case self::DELETE:
-                $response = $this->delete($reception);
-                break;
-            case self::GET:
-                $response = $this->read($reception);
-                break;
             case self::POST:
                 $response = $this->create($reception);
                 break;
-            case self::PUT:
-                $response = $this->update($reception);
-                break;
         }
-
-        return $response;
-    }
-
-    private function delete(Reception $reception): Response
-    {
-        $item = $reception->toDelete();
-
-        $logicResult = (new Logic($item, $this->dataPath))->delete();
-
-        $response = (new Presentation($this->response, $logicResult))->fromDelete();
-
-        return $response;
-    }
-
-    private function read(Reception $reception): Response
-    {
-        $item = $reception->toRead();
-
-        $logicResult = (new Logic($item, $this->dataPath))->read();
-
-        $response = (new Presentation($this->response, $logicResult))->fromRead();
 
         return $response;
     }
@@ -65,20 +34,9 @@ class Controller extends \Environment\Controller
     {
         $item = $reception->toCreate();
 
-        $logicResult = (new Logic($item, $this->dataPath))->create();
+        $userSet = (new UserManager($item, $this->getDataPath()))->create();
 
-        $response = (new Presentation($this->response, $logicResult))->fromCreate();
-
-        return $response;
-    }
-
-    private function update(Reception $reception): Response
-    {
-        $item = $reception->toUpdate();
-
-        $logicResult = (new Logic($item, $this->dataPath))->update();
-
-        $response = (new Presentation($this->response, $logicResult))->fromUpdate();
+        $response = (new Presentation($this->getRequest(), $this->getResponse(), $userSet))->process();
 
         return $response;
     }
