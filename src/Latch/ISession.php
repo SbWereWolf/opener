@@ -23,21 +23,15 @@ namespace Latch;
  *   ),
  * )
  */
-interface ISession
+interface ISession extends Token
 {
     public function setToken(string $token): self;
 
     public function setFinish(int $finish): self;
-
-    public function getToken(): string;
 
     public function getFinish(): int;
 
     public function setEmail(string $email): self;
 
     public function getEmail(): string;
-
-    public function setUserId(int $userId): self;
-
-    public function getUserId(): int;
 }

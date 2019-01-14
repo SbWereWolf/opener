@@ -29,18 +29,24 @@ class SessionHandler extends DataHandler
                 /** @var ISession $storedSession */
                 $storedSession = $sessionAccess->getData()->next();
 
-                $isValid = $storedSession->getFinish() < time();
+                $isValid = $storedSession->getFinish() > 0;
             }
 
             if ($isValid) {
-                $session->setUserId($storedSession->getUserId());
-                $this->getSessionAccess()->insertWithUserId($session);
+                $result = $this->getSessionAccess()->insertWithToken($session)->getData();
             }
 
             $this->commit();
         } catch (\Exception $e) {
             $this->rollBack();
         }
+
+        return $result;
+    }
+
+    public function finish(ISession $session): Content
+    {
+        $result = $this->getSessionAccess()->delete($session)->getData();
 
         return $result;
     }
@@ -60,12 +66,5 @@ class SessionHandler extends DataHandler
         }
 
         return $sessionAccess;
-    }
-
-    public function finish(ISession $session): Content
-    {
-        $result = $this->getSessionAccess()->delete($session)->getData();
-
-        return $result;
     }
 }

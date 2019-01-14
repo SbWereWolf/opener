@@ -33,12 +33,6 @@ class Reception extends \Environment\Reception
         return $value;
     }
 
-    private  function getUserId(): int
-    {
-        $value = $this->getParser()->getIntegerField(self::USER_ID);
-        return $value;
-    }
-
     private  function getShutterId(): int
     {
         $value = $this->getParser()->getIntegerField(self::SHUTTER_ID);
@@ -99,7 +93,7 @@ class Reception extends \Environment\Reception
         $body = $this->getRequest()->getParsedBody();
         $this->setParser(new ArrayParser($body));
 
-        $lease = $this->setUpLease();
+        $lease = $this->setupLease();
 
         return $lease;
     }
@@ -108,15 +102,14 @@ class Reception extends \Environment\Reception
     {
         $this->setParser(new ArrayParser($this->getArguments()));
 
-        $lease = $this->setUpLease();
+        $lease = $this->setupLease();
 
         return $lease;
     }
 
-    private function setUpLease(): ILease
+    private function setupLease(): ILease
     {
         $id = $this->getId();
-        $userId = $this->getUserId();
         $shutterId = $this->getShutterId();
         $start = $this->getStart();
         $finish = $this->getFinish();
@@ -125,7 +118,6 @@ class Reception extends \Environment\Reception
 
         $lease = (new Lease())
             ->setId($id)
-            ->setUserId($userId)
             ->setShutterId($shutterId)
             ->setStart($start)
             ->setFinish($finish)

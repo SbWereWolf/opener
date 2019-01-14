@@ -43,9 +43,9 @@ VALUES(
         return $this;
     }
 
-    public function insertWithUserId(ISession $session): self
+    public function insertWithToken(ISession $session): self
     {
-        $requestText = "
+        $requestText = '
 INSERT INTO 
   session
 (   
@@ -55,20 +55,16 @@ INSERT INTO
 )
 VALUES(
     :TOKEN,
-    :FINISH,
-    :USER_ID
+    strftime("%s", "now")+60*15,
+    (SELECT COALESCE(MAX(user_id), 0) AS user_id FROM session WHERE token =:TOKEN)
 )
 ;
-   ";
+   ';
         $request = $this->prepareRequest($requestText);
 
         $token = $session->getToken();
-        $finish = $session->getFinish();
-        $userId = $session->getUserId();
 
         $request->bindValue(':TOKEN', $token, \PDO::PARAM_STR);
-        $request->bindValue(':FINISH', $finish, \PDO::PARAM_INT);
-        $request->bindValue(':USER_ID', $userId, \PDO::PARAM_INT);
 
         $this->processWrite($request)->processSuccess();
 
@@ -79,12 +75,12 @@ VALUES(
     {
         $requestText = '
 SELECT 
-    MAX(finish) as finish,
-    MAX(user_id) as user_id
+    COALESCE(MAX(finish), 0) as finish
 FROM
     session
 WHERE 
  token = :TOKEN
+ AND finish > strftime("%s", "now")
 ;
    ';
         $request = $this->prepareRequest($requestText);
@@ -132,11 +128,9 @@ WHERE
             $parser = new ArrayParser($dataRow);
 
             $finish = $parser->getIntegerField('finish');
-            $userId = $parser->getIntegerField('user_id');
 
             $item = (new Session())
-                ->setFinish($finish)
-                ->setUserId($userId);
+                ->setFinish($finish);
 
             $result->push($item);
         }

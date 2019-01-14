@@ -34,6 +34,35 @@ namespace Latch;
  *   ),
  * )
  * @SWG\Definition(
+ *   definition="lease-with-token",
+ *   type="object",
+ *   description="lease of latch",
+ *   @SWG\Property(
+ *       property="token",
+ *       type="string",
+ *   ),
+ *   @SWG\Property(
+ *       property="user-id",
+ *       type="integer",
+ *   ),
+ *   @SWG\Property(
+ *       property="shutter-id",
+ *       type="integer",
+ *   ),
+ *   @SWG\Property(
+ *       property="start",
+ *       type="integer",
+ *   ),
+ *   @SWG\Property(
+ *       property="finish",
+ *       type="integer",
+ *   ),
+ *   @SWG\Property(
+ *       property="occupancy-type-id",
+ *       type="integer",
+ *   ),
+ * )
+ * @SWG\Definition(
  *   definition="lease-with-id",
  *   type="object",
  *   description="lease of latch",
@@ -63,82 +92,43 @@ namespace Latch;
  *   ),
  * )
  */
-interface ILease
+interface ILease extends Token
 {
-    /**
-     * @param int $id
-     * @return Lease
-     */
-    public function setId(int $id): Lease;
+
+    public function setId(int $id): self;
+
+    public function setToken(string $token): self;
 
     /**
      * @return int
      */
     public function getId(): int;
 
-    /**
-     * @param int $userId
-     * @return Lease
-     */
-    public function setUserId(int $userId): Lease;
-
-    /**
-     * @return int
-     */
-    public function getUserId(): int;
-
-    /**
-     * @param int $shutterId
-     * @return Lease
-     */
-    public function setShutterId(int $shutterId): Lease;
+    public function setShutterId(int $shutterId): self;
 
     /**
      * @return int
      */
     public function getShutterId(): int;
 
-    /**
-     * @param string $start
-     * @return Lease
-     */
-    public function setStart(int $start): Lease;
+    public function setStart(int $start): self;
 
     /**
      * @return int
      */
     public function getStart(): int;
 
-    /**
-     * @param string $finish
-     * @return Lease
-     */
-    public function setFinish(int $finish): Lease;
+    public function setFinish(int $finish): self;
 
     /**
      * @return int
      */
     public function getFinish(): int;
 
-    /**
-     * @param int $occupancyTypeId
-     * @return Lease
-     */
-    public function setOccupancyTypeId(int $occupancyTypeId): Lease;
+    public function setOccupancyTypeId(int $occupancyTypeId): self;
 
     /**
      * @return int
      */
     public function getOccupancyTypeId(): int;
-
-    /**
-     * @param string $token
-     * @return Lease
-     */
-    public function setToken(string $token): Lease;
-
-    /**
-     * @return string
-     */
-    public function getToken(): string;
 }

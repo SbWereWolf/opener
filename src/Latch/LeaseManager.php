@@ -55,30 +55,31 @@ class LeaseManager
         return $this->dataPath;
     }
 
-    public function read(): Content
+    public function retrieveActual(): Content
     {
-
         $lease = $this->getLease();
-        $isExists = !empty($lease->getToken());
-
         $dataPath = $this->getDataPath();
-        $result = new LeaseSet();
-        if($isExists){
-            $result = (new LeaseHandler($dataPath))->getCurrent($lease);
-        }
-        if(!$isExists){
-            $result = (new LeaseHandler($dataPath))->getActual();
-        }
+
+        $result = (new LeaseHandler($dataPath))->getActual();
+
+        return $result;
+    }
+
+    public function retrieveCurrent(): Content
+    {
+        $lease = $this->getLease();
+        $dataPath = $this->getDataPath();
+
+        $result = (new LeaseHandler($dataPath))->getCurrent($lease);
 
         return $result;
     }
 
     public function create(): Content
     {
-
         $lease = $this->getLease();
-
         $dataPath = $this->getDataPath();
+
         $result = (new LeaseHandler($dataPath))->registerLease($lease);
 
         return $result;
@@ -86,10 +87,9 @@ class LeaseManager
 
     public function update(): Content
     {
-
         $lease = $this->getLease();
-
         $dataPath = $this->getDataPath();
+
         $result = (new LeaseHandler($dataPath))->overrideLease($lease);
 
         return $result;

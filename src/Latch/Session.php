@@ -13,7 +13,6 @@ class Session implements ISession
     private $token = '';
     private $finish = 0;
     private $email = '';
-    private $userId = 0;
 
     /**
      * @return int
@@ -59,24 +58,6 @@ class Session implements ISession
     public function setEmail(string $email): ISession
     {
         $this->email = $email;
-        return $this;
-    }
-
-    /**
-     * @return int
-     */
-    public function getUserId(): int
-    {
-        return $this->userId;
-    }
-
-    /**
-     * @param int $userId
-     * @return Session
-     */
-    public function setUserId(int $userId): ISession
-    {
-        $this->userId = $userId;
         return $this;
     }
 }

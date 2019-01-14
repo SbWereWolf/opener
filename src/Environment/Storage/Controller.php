@@ -157,6 +157,8 @@ drop index IF EXISTS user_email_uindex;
 drop index IF EXISTS occupancy_user_id_start_finish_shutter_id_index;
 drop index IF EXISTS session_finish_token_user_id_index;
 drop index IF EXISTS user_role_user_id_role_id_uindex;
+
+VACUUM;
 ';
 
     public function process(): Response

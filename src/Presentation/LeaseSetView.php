@@ -14,7 +14,6 @@ use Latch\ILease;
 class LeaseSetView implements View
 {
     const ID = 'id';
-    const USER_ID = 'user-id';
     const SHUTTER_ID = 'shutter-id';
     const START = 'start';
     const FINISH = 'finish';
@@ -50,7 +49,6 @@ class LeaseSetView implements View
                 self::OCCUPANCY_TYPE_ID => $element->getOccupancyTypeId(),
                 self::SHUTTER_ID => $element->getShutterId(),
                 self::START => $element->getStart(),
-                self::USER_ID => $element->getUserId(),
             );
 
             $collection[] = $record;

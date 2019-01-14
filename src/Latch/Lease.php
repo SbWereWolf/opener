@@ -11,7 +11,6 @@ namespace Latch;
 class Lease implements ILease
 {
     private $id = 0;
-    private $userId = 0;
     private $shutterId = 0;
     private $start = 0;
     private $finish = 0;
@@ -22,7 +21,7 @@ class Lease implements ILease
      * @param int $id
      * @return Lease
      */
-    public function setId(int $id): self
+    public function setId(int $id): ILease
     {
         $this->id = $id;
         return $this;
@@ -37,28 +36,10 @@ class Lease implements ILease
     }
 
     /**
-     * @param int $userId
-     * @return Lease
-     */
-    public function setUserId(int $userId): self
-    {
-        $this->userId = $userId;
-        return $this;
-    }
-
-    /**
-     * @return int
-     */
-    public function getUserId(): int
-    {
-        return $this->userId;
-    }
-
-    /**
      * @param int $shutterId
      * @return Lease
      */
-    public function setShutterId(int $shutterId): self
+    public function setShutterId(int $shutterId): ILease
     {
         $this->shutterId = $shutterId;
         return $this;
@@ -76,7 +57,7 @@ class Lease implements ILease
      * @param string $start
      * @return Lease
      */
-    public function setStart(int $start): self
+    public function setStart(int $start): ILease
     {
         $this->start = $start;
         return $this;
@@ -94,7 +75,7 @@ class Lease implements ILease
      * @param string $finish
      * @return Lease
      */
-    public function setFinish(int $finish): self
+    public function setFinish(int $finish): ILease
     {
         $this->finish = $finish;
         return $this;
@@ -112,7 +93,7 @@ class Lease implements ILease
      * @param int $occupancyTypeId
      * @return Lease
      */
-    public function setOccupancyTypeId(int $occupancyTypeId): self
+    public function setOccupancyTypeId(int $occupancyTypeId): ILease
     {
         $this->occupancyTypeId = $occupancyTypeId;
         return $this;
@@ -130,7 +111,7 @@ class Lease implements ILease
      * @param string $token
      * @return Lease
      */
-    public function setToken(string $token): self
+    public function setToken(string $token): ILease
     {
         $this->token = $token;
         return $this;

@@ -2,6 +2,7 @@
 
 namespace Environment;
 
+use Latch\SessionHelper;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -23,6 +24,14 @@ class Controller implements IController
             ->setDataPath($dataPath)
             ->setRequest($request)
             ->setResponse($response);
+    }
+
+
+    protected function prolongSession(string $token, string $dataPath): bool
+    {
+        $result = (new SessionHelper($dataPath))->prolong($token);
+
+        return $result;
     }
 
     /**

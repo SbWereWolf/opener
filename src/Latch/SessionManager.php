@@ -31,6 +31,21 @@ class SessionManager
         return $result;
     }
 
+    public function prolong(): bool
+    {
+        $session = $this->getSession();
+        $dataPath = $this->getDataPath();
+
+        $result = (new SessionHandler($dataPath))->prolong($session);
+
+        $isValid = $result->isSuccess();
+        if ($isValid) {
+            $isValid = !empty($result->next());
+        }
+
+        return $isValid;
+    }
+
     public function getSession(): ISession
     {
         return $this->session;

@@ -24,21 +24,28 @@ class Router extends \Environment\Router
         $token = $this->token;
         /**
          * @SWG\Get(
-         *    path="/lease/",
-         *     summary="Browse whole collection of actual lease suggestion",
+         *    path="/lease/actual/[{token}/]",
+         *    summary="Browse whole collection of actual lease suggestion",
          *    description="Lease suggestion with finish time greater than now",
-         *     @SWG\Response(
-         *         response=200,
-         *         description="Successful operation",
-         *         @SWG\Schema(
-         *             type="array",
-         *             @SWG\Items(ref="#/definitions/lease")
-         *         ),
-         *     ),
+         *    @SWG\Parameter(
+         *        name="token",
+         *        in="path",
+         *        type="string",
+         *        required=false,
+         *    ),
+         *    @SWG\Response(
+         *        response=200,
+         *        description="Successful operation",
+         *        @SWG\Schema(
+         *            type="array",
+         *            @SWG\Items(ref="#/definitions/lease-with-id")
+         *        ),
+         *    ),
          * )
          */
-        $app->get($root, function (Request $request, Response $response, array $arguments) {
+        $app->get($root . "actual/[$token]", function (Request $request, Response $response, array $arguments) {
             $response = (new Controller($request, $response, $arguments, DATA_PATH))
+                ->letRetrieveActual()
                 ->process();
 
             return $response;
@@ -46,23 +53,23 @@ class Router extends \Environment\Router
         /**
          * @SWG\Post(
          *    path="/lease/",
-         *     summary="Create lease",
+         *    summary="Create lease",
          *    description="Create new lease",
-         *     @SWG\Response(
-         *         response=201,
-         *         description="Successful operation",
-         *         @SWG\Schema(
-         *             type="array",
-         *             @SWG\Items(ref="#/definitions/lease-with-id")
-         *         ),
-         *     ),
-         *     @SWG\Parameter(
-         *         name="lease",
-         *         in="body",
-         *         description="properties of lease for create",
-         *         required=true,
-         *         @SWG\Schema(ref="#/definitions/lease"),
-         *     ),
+         *    @SWG\Parameter(
+         *        name="lease",
+         *        in="body",
+         *        description="properties of lease for create",
+         *        required=true,
+         *        @SWG\Schema(ref="#/definitions/lease-with-token"),
+         *    ),
+         *    @SWG\Response(
+         *        response=201,
+         *        description="Successful operation",
+         *        @SWG\Schema(
+         *            type="array",
+         *            @SWG\Items(ref="#/definitions/lease-with-id")
+         *        ),
+         *    ),
          * )
          */
         $app->post($root, function (Request $request, Response $response, array $arguments) {
@@ -74,9 +81,16 @@ class Router extends \Environment\Router
         });
         /**
          * @SWG\Get(
-         *    path="/lease/{token}/",
+         *    path="/lease/current/{token}/",
          *     summary="Browse whole collection of own leases of session user",
          *    description="Lease suggestion with finish time greater than now and token equal that given token",
+         *     @SWG\Parameter(
+         *         name="token",
+         *         in="path",
+         *         type="string",
+         *         description="Token of users session",
+         *         required=true,
+         *     ),
          *     @SWG\Response(
          *         response=200,
          *         description="Successful operation",
@@ -85,17 +99,11 @@ class Router extends \Environment\Router
          *             @SWG\Items(ref="#/definitions/lease")
          *         ),
          *     ),
-         *     @SWG\Parameter(
-         *         name="token",
-         *         in="path",
-         *         type="string",
-         *         description="Token of users session",
-         *         required=true,
-         *     ),
          * )
          */
-        $app->get("$root$token", function (Request $request, Response $response, array $arguments) {
+        $app->get($root . "current/$token", function (Request $request, Response $response, array $arguments) {
             $response = (new Controller($request, $response, $arguments, DATA_PATH))
+                ->letRetrieveCurrent()
                 ->process();
 
             return $response;
@@ -105,16 +113,16 @@ class Router extends \Environment\Router
          *    path="/lease/",
          *     summary="Override lease",
          *    description="Redefine properties of lease",
-         *     @SWG\Response(
-         *         response=200,
-         *         description="Successful operation",
-         *     ),
          *     @SWG\Parameter(
          *         name="lease",
          *         in="body",
          *         description="properties of lease for override",
          *         required=true,
          *         @SWG\Schema(ref="#/definitions/lease-with-id"),
+         *     ),
+         *     @SWG\Response(
+         *         response=200,
+         *         description="Successful operation",
          *     ),
          * )
          */
