@@ -13,9 +13,6 @@ interface Content
 
     public function push($element): bool;
 
-    /**
-     * @return \Latch\ILease
-     */
     public function next();
 
     public function setSuccessStatus();

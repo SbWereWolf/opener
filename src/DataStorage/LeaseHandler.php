@@ -19,6 +19,7 @@ class LeaseHandler extends DataHandler
     public function getActual(): Content
     {
         $result = $this->getLeaseAccess()->getActual()->getData();
+
         return $result;
     }
 

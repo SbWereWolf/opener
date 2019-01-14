@@ -11,34 +11,26 @@ use Latch\UserSet;
 
 class UserAccess extends DataAccess
 {
-    private $data = null;
-
-    private function prepareRequest(string $requestText)
+    private function processRead(\PDOStatement $request): self
     {
-        $dbConnection = $this->getAccess();
-        $request = $dbConnection->prepare($requestText);
-        return $request;
-    }
-
-    private function processSelect(\PDOStatement $request): self
-    {
-        $isSuccess = $request->execute();
+        $isSuccess = $this->execute($request);
 
         if ($isSuccess) {
             $dataSet = $request->fetchAll(\PDO::FETCH_ASSOC);
-
-            $rowCount = $request->rowCount();
-            $this->setRowCount($rowCount);
-
-            $data = $this->parseOutput($dataSet);
-            $this->setData($data);
-
             $this->setSuccessStatus();
         }
 
         if (!$isSuccess) {
             $this->setFailStatus();
         }
+
+        $shouldParseData = $this->isSuccess() && $this->getRowCount() > 0;
+        $data = new UserSet();
+        if ($shouldParseData) {
+            $data = $this->parseOutput($dataSet);
+        }
+
+        $this->setData($data);
 
         return $this;
     }
@@ -50,8 +42,8 @@ class UserAccess extends DataAccess
             $parser = new ArrayParser($dataRow);
 
             $id = $parser->getIntegerField('id');
-            $email = $parser->getIntegerField('user_id');
-            $secret = $parser->getIntegerField('shutter_id');
+            $email = $parser->getStringField('email');
+            $secret = $parser->getStringField('secret');
 
             $item = (new User())
                 ->setId($id)
@@ -59,14 +51,6 @@ class UserAccess extends DataAccess
                 ->setSecret($secret);
 
             $result->push($item);
-        }
-
-        $isSuccess = $this->isSuccess();
-        if ($isSuccess) {
-            $result->setSuccessStatus();
-        }
-        if (!$isSuccess) {
-            $result->setFailStatus();
         }
 
         return $result;
@@ -85,10 +69,6 @@ VALUES(
     :EMAIL,
     :SECRET
 )
-RETURNING 
-    id,
-    email,
-    secret
 ;
    ';
         $request = $this->prepareRequest($requestText);
@@ -99,20 +79,31 @@ RETURNING
         $request->bindValue(':EMAIL', $email, \PDO::PARAM_STR);
         $request->bindValue(':SECRET', $secret, \PDO::PARAM_STR);
 
-        $this->processSelect($request);
+        $this->processWrite($request)->processSuccess();
 
         return $this;
     }
 
-    public function getData(): Content
+    public function select(IUser $user): self
     {
-        return $this->data;
-    }
+        $requestText = '
+SELECT
+    id,
+    email,
+    secret
+FROM 
+  \'user\'
+WHERE
+    email = :EMAIL
+;
+   ';
+        $request = $this->prepareRequest($requestText);
 
-    private function setData(Content $data): self
-    {
-        $this->data = $data;
+        $email = $user->getEmail();
+        $request->bindValue(':EMAIL', $email, \PDO::PARAM_STR);
+
+        $this->processRead($request)->processSuccess();
+
         return $this;
     }
-
 }

@@ -8,13 +8,17 @@
 namespace Latch;
 
 
-class HaspSet extends DataSet
+class SessionSet extends DataSet
 {
+    /**
+     * @param $element
+     * @return bool
+     */
     public function push($element): bool
     {
         $result = false;
 
-        $isValid = $element instanceof IHasp;
+        $isValid = $element instanceof ISession;
         if ($isValid) {
             $this->collection[] = $element;
             $result = true;

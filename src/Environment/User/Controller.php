@@ -3,6 +3,7 @@
 namespace Environment\User;
 
 
+use Environment\Session;
 use Latch\UserManager;
 use Slim\Http\Response;
 
@@ -13,18 +14,30 @@ use Slim\Http\Response;
  */
 class Controller extends \Environment\Controller
 {
+    const LOG_IN = 'login/';
+
     public function process(): Response
     {
         $request = $this->getRequest();
-        $arguments = $this->getArguments();
-        $reception = new  Reception($request, $arguments);
+        $isPost = $request->isPost();
 
-        $method = $request->getMethod();
+        $reception = null;
+        $shouldProcess = false;
+        if ($isPost) {
+            $shouldLogIn = $this->isLogIn();
+
+            $arguments = $this->getArguments();
+            $reception = new  Reception($request, $arguments);
+
+            $shouldProcess = true;
+        }
+
         $response = $this->getResponse();
-        switch ($method) {
-            case self::POST:
-                $response = $this->create($reception);
-                break;
+        if ($shouldProcess && $shouldLogIn) {
+            $response = $this->logIn($reception);
+        }
+        if ($shouldProcess && !$shouldLogIn) {
+            $response = $this->create($reception);
         }
 
         return $response;
@@ -39,5 +52,28 @@ class Controller extends \Environment\Controller
         $response = (new Presentation($this->getRequest(), $this->getResponse(), $userSet))->process();
 
         return $response;
+    }
+
+    private function logIn(Reception $reception): Response
+    {
+        $item = $reception->toCreate();
+
+        $sessionSet = (new UserManager($item, $this->getDataPath()))->logIn();
+
+        $response = (new Session\Presentation($this->getRequest(), $this->getResponse(), $sessionSet))
+            ->process();
+
+        return $response;
+    }
+
+    /**
+     * @return bool
+     */
+    private function isLogIn(): bool
+    {
+        $path = $this->getRequest()->getUri()->getPath();
+        $shouldStartSession = boolval(strpos($path, self::LOG_IN));
+
+        return $shouldStartSession;
     }
 }

@@ -18,24 +18,7 @@ namespace Latch;
  *       type="string",
  *   ),
  *   @SWG\Property(
- *       property="secret",
- *       type="string",
- *   ),
- * )
- * @SWG\Definition(
- *   definition="user-with-id",
- *   type="object",
- *   description="user of latch with id",
- *   @SWG\Property(
- *       property="id",
- *       type="integer",
- *   ),
- *   @SWG\Property(
- *       property="email",
- *       type="string",
- *   ),
- *   @SWG\Property(
- *       property="secret",
+ *       property="password",
  *       type="string",
  *   ),
  * )
@@ -83,5 +66,14 @@ interface IUser
      */
     public function getSecret(): string;
 
+    /**
+     * @param string $password
+     * @return User
+     */
+    public function setPassword(string $password): IUser;
 
+    /**
+     * @return string
+     */
+    public function getPassword(): string;
 }

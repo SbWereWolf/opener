@@ -3,11 +3,15 @@
 namespace DataStorage;
 
 
+use Latch\Content;
+use Latch\DataSet;
+
 class DataAccess
 {
     private $access = null;
     private $status = false;
     private $rowCount = 0;
+    private $data = null;
 
     function __construct(\PDO $access)
     {
@@ -51,20 +55,23 @@ class DataAccess
         return $this->access;
     }
 
-    /**
-     * @param $requestText
-     * @return DataAccess
-     */
-    protected function processUpdate(\PDOStatement $request): self
+    protected function prepareRequest(string $requestText)
     {
-        $isSuccess = $request->execute();
+        $dbConnection = $this->getAccess();
+        $request = $dbConnection->prepare($requestText);
+        return $request;
+    }
+
+    protected function processWrite(\PDOStatement $request): self
+    {
+        $isSuccess = $this->execute($request);
+
+        $data = new DataSet();
+        $this->setData($data);
 
         if ($isSuccess) {
             $this->setSuccessStatus();
-            $rowCount = $request->rowCount();
-            $this->setRowCount($rowCount);
         }
-
         if (!$isSuccess) {
             $this->setFailStatus();
         }
@@ -90,5 +97,44 @@ class DataAccess
     {
         return $this->status == true;
 
+    }
+
+    public function getData(): Content
+    {
+        return $this->data;
+    }
+
+    protected function setData(Content $data): self
+    {
+        $this->data = $data;
+        return $this;
+    }
+
+    protected function processSuccess(): Content
+    {
+        $isSuccess = $this->isSuccess();
+        $data = $this->getData();
+
+        if ($isSuccess) {
+            $data->setSuccessStatus();
+        }
+        if (!$isSuccess) {
+            $data->setFailStatus();
+        }
+
+        return $data;
+    }
+
+    /**
+     * @param \PDOStatement $request
+     * @return bool
+     */
+    protected function execute(\PDOStatement $request): bool
+    {
+        $isSuccess = $request->execute();
+        $rowCount = $request->rowCount();
+        $this->setRowCount($rowCount);
+
+        return $isSuccess;
     }
 }

@@ -8,11 +8,12 @@
 namespace Latch;
 
 
-class LeaseSet implements Content
+class LeaseSet extends DataSet
 {
-    private $collection = array();
-    private $status = false;
-
+    /**
+     * @param $element
+     * @return bool
+     */
     public function push($element): bool
     {
         $result = false;
@@ -24,26 +25,5 @@ class LeaseSet implements Content
         }
 
         return $result;
-    }
-
-    public function next()
-    {
-        foreach ($this->collection as $element) {
-            yield $element;
-        }
-        return;
-    }
-    public function setSuccessStatus(){
-        $this->status = true;
-    }
-
-    public function setFailStatus(){
-        $this->status = false;
-    }
-
-    public function isSuccess(): bool
-    {
-        return $this->status == true;
-
     }
 }

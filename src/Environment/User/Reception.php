@@ -14,25 +14,18 @@ use Latch\User;
  */
 class Reception extends \Environment\Reception
 {
-    const ID = 'id';
     const EMAIL = 'email';
-    const SECRET = 'secret';
+    const PASSWORD = 'password';
 
-    private function getId(): int
+    private function getEmail(): string
     {
-        $value = $this->getParser()->getIntegerField(self::ID);
+        $value = $this->getParser()->getStringField(self::EMAIL);
         return $value;
     }
 
-    private function getEmail(): int
+    private function getPassword(): string
     {
-        $value = $this->getParser()->getIntegerField(self::EMAIL);
-        return $value;
-    }
-
-    private function getSecret(): int
-    {
-        $value = $this->getParser()->getIntegerField(self::SECRET);
+        $value = $this->getParser()->getStringField(self::PASSWORD);
         return $value;
     }
 
@@ -51,21 +44,19 @@ class Reception extends \Environment\Reception
         $body = $this->getRequest()->getParsedBody();
         $this->setParser(new ArrayParser($body));
 
-        $user = $this->setUpUser();
+        $user = $this->setupUser();
 
         return $user;
     }
 
-    private function setUpUser(): IUser
+    private function setupUser(): IUser
     {
-        $id = $this->getId();
         $email = $this->getEmail();
-        $secret = $this->getSecret();
+        $password = $this->getPassword();
 
         $user = (new User())
-            ->setId($id)
             ->setEmail($email)
-            ->setSecret($secret);
+            ->setPassword($password);
 
         return $user;
     }

@@ -20,17 +20,18 @@ class Router extends \Environment\Router
     {
         $app = $this->getHandler();
         $root = $this->root;
+        $login = Controller::LOG_IN;
         /**
          * @SWG\Post(
          *    path="/user/",
-         *     summary="Create user",
+         *     summary="Create a user",
          *    description="Create new user",
          *     @SWG\Response(
          *         response=201,
          *         description="Successful operation",
          *         @SWG\Schema(
          *             type="array",
-         *             @SWG\Items(ref="#/definitions/user-with-id")
+         *             @SWG\Items(ref="#/definitions/user")
          *         ),
          *     ),
          *     @SWG\Parameter(
@@ -43,6 +44,35 @@ class Router extends \Environment\Router
          * )
          */
         $app->post($root, function (Request $request, Response $response, array $arguments) {
+
+            $response = (new Controller($request, $response, $arguments, DATA_PATH))
+                ->process();
+
+            return $response;
+        });
+        /**
+         * @SWG\Post(
+         *    path="/user/login/",
+         *     summary="Open session",
+         *    description="Open working session for user",
+         *     @SWG\Response(
+         *         response=201,
+         *         description="Successful operation",
+         *         @SWG\Schema(
+         *             type="array",
+         *             @SWG\Items(ref="#/definitions/session")
+         *         ),
+         *     ),
+         *     @SWG\Parameter(
+         *         name="user",
+         *         in="body",
+         *         description="properties of user for create session",
+         *         required=true,
+         *         @SWG\Schema(ref="#/definitions/user"),
+         *     ),
+         * )
+         */
+        $app->post("$root$login", function (Request $request, Response $response, array $arguments) {
 
             $response = (new Controller($request, $response, $arguments, DATA_PATH))
                 ->process();

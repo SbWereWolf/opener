@@ -14,6 +14,7 @@ class User implements IUser
     private $id = 0;
     private $email = '';
     private $secret = '';
+    private $password = '';
 
     public function setId($id): IUser
     {
@@ -55,5 +56,23 @@ class User implements IUser
     public function getSecret(): string
     {
         return $this->secret;
+    }
+
+    /**
+     * @param string $password
+     * @return User
+     */
+    public function setPassword(string $password): IUser
+    {
+        $this->password = $password;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPassword(): string
+    {
+        return $this->password;
     }
 }

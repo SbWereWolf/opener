@@ -12,6 +12,9 @@ use DataStorage\UserHandler;
 
 class UserManager
 {
+    /* session duration is 60 sec/min * 15 min */
+    const SESSION_DURATION = 60 * 15;
+
     private $user = null;
     private $dataPath = '';
 
@@ -23,11 +26,26 @@ class UserManager
 
     public function create(): Content
     {
+        $user = $this->getUser();
 
-        $lease = $this->getUser();
+        $password = $user->getPassword();
+        $secret = password_hash($password, PASSWORD_BCRYPT);
+
+        $user->setSecret($secret);
 
         $dataPath = $this->getDataPath();
-        $result = (new UserHandler($dataPath))->registerUser($lease);
+        $result = (new UserHandler($dataPath))->registerUser($user);
+
+        return $result;
+    }
+
+    public function logIn(): Content
+    {
+        $user = $this->getUser();
+
+        $dataPath = $this->getDataPath();
+        $duration = self::SESSION_DURATION;
+        $result = (new UserHandler($dataPath))->startSession($user, $duration);
 
         return $result;
     }

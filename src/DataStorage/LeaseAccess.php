@@ -11,8 +11,6 @@ use Latch\LeaseSet;
 
 class LeaseAccess extends DataAccess
 {
-    private $data = null;
-
     public function isLeasePossible(ILease $lease): self
     {
         $requestText = '
@@ -53,7 +51,7 @@ EXISTS
         $request->bindValue(':START', $start, \PDO::PARAM_INT);
         $request->bindValue(':FINISH', $finish, \PDO::PARAM_INT);
 
-        $this->processSelect($request);
+        $this->processRead($request)->processSuccess();
 
         return $this;
     }
@@ -88,41 +86,31 @@ WHERE
 ;
    ';
         $request = $this->prepareRequest($requestText);
-        $this->processSelect($request);
+        $this->processRead($request)->processSuccess();
 
         return $this;
     }
 
-    /**
-     * @param string $requestText
-     * @return bool|\PDOStatement
-     */
-    private function prepareRequest(string $requestText)
+    private function processRead(\PDOStatement $request): self
     {
-        $dbConnection = $this->getAccess();
-        $request = $dbConnection->prepare($requestText);
-        return $request;
-    }
-
-    private function processSelect(\PDOStatement $request): self
-    {
-        $isSuccess = $request->execute();
+        $isSuccess = $this->execute($request);
 
         if ($isSuccess) {
             $dataSet = $request->fetchAll(\PDO::FETCH_ASSOC);
-
-            $rowCount = $request->rowCount();
-            $this->setRowCount($rowCount);
-
-            $data = $this->parseOutput($dataSet);
-            $this->setData($data);
-
             $this->setSuccessStatus();
         }
 
         if (!$isSuccess) {
             $this->setFailStatus();
         }
+
+        $shouldParseData = $this->isSuccess() && $this->getRowCount() > 0;
+        $data = new LeaseSet();
+        if ($shouldParseData) {
+            $data = $this->parseOutput($dataSet);
+        }
+
+        $this->setData($data);
 
         return $this;
     }
@@ -208,7 +196,7 @@ RETURNING
         $request->bindValue(':FINISH', $finish, \PDO::PARAM_INT);
         $request->bindValue(':OCCUPANCY_TYPE_ID', $occupancyTypeId, \PDO::PARAM_INT);
 
-        $this->processSelect($request);
+        $this->processWrite($request)->processSuccess();
 
         return $this;
     }
@@ -244,9 +232,7 @@ WHERE
         $request->bindValue(':FINISH', $finish, \PDO::PARAM_INT);
         $request->bindValue(':OCCUPANCY_TYPE_ID', $occupancyTypeId, \PDO::PARAM_INT);
 
-        $this->processUpdate($request);
-
-        $this->setData(new LeaseSet());
+        $this->processWrite($request)->processSuccess();
 
         return $this;
     }
@@ -281,19 +267,8 @@ WHERE
         $token = $lease->getToken();
         $request->bindValue(':TOKEN', $token);
 
-        $this->processSelect($request);
+        $this->processRead($request)->processSuccess();
 
-        return $this;
-    }
-
-    public function getData(): Content
-    {
-        return $this->data;
-    }
-
-    private function setData(Content $data): self
-    {
-        $this->data = $data;
         return $this;
     }
 }
