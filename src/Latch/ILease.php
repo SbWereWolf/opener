@@ -131,4 +131,11 @@ interface ILease extends Token
      * @return int
      */
     public function getOccupancyTypeId(): int;
+
+    public function setUserId(int $userId): ILease;
+
+    /**
+     * @return int
+     */
+    public function getUserId(): int;
 }

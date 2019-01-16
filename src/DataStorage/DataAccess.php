@@ -64,17 +64,8 @@ class DataAccess
 
     protected function processWrite(\PDOStatement $request): self
     {
-        $isSuccess = $this->execute($request);
-
-        $data = new DataSet();
-        $this->setData($data);
-
-        if ($isSuccess) {
-            $this->setSuccessStatus();
-        }
-        if (!$isSuccess) {
-            $this->setFailStatus();
-        }
+        $this->execute($request);
+        $this->setData(new DataSet());
 
         return $this;
     }
@@ -129,12 +120,19 @@ class DataAccess
      * @param \PDOStatement $request
      * @return bool
      */
-    protected function execute(\PDOStatement $request): bool
+    protected function execute(\PDOStatement $request): self
     {
         $isSuccess = $request->execute();
         $rowCount = $request->rowCount();
         $this->setRowCount($rowCount);
 
-        return $isSuccess;
+        if ($isSuccess) {
+            $this->setSuccessStatus();
+        }
+        if (!$isSuccess) {
+            $this->setFailStatus();
+        }
+
+        return $this;
     }
 }

@@ -9,7 +9,7 @@ use Slim\Http\Response;
  * Copyright © 2018 Volkhin Nikolay
  * 25.06.18 21:52
  */
-interface IHttpCode extends HttpMethod
+interface IHttpCode
 {
     const COMMON_OK = 200;
     const POST_OK = 201;

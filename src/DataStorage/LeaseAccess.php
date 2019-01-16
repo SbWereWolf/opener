@@ -93,18 +93,13 @@ WHERE
 
     private function processRead(\PDOStatement $request): self
     {
-        $isSuccess = $this->execute($request);
+        $isSuccess = $this->execute($request)->isSuccess();
 
         if ($isSuccess) {
             $dataSet = $request->fetchAll(\PDO::FETCH_ASSOC);
-            $this->setSuccessStatus();
         }
 
-        if (!$isSuccess) {
-            $this->setFailStatus();
-        }
-
-        $shouldParseData = $this->isSuccess() && $this->getRowCount() > 0;
+        $shouldParseData = $isSuccess && $this->getRowCount() > 0;
         $data = new LeaseSet();
         if ($shouldParseData) {
             $data = $this->parseOutput($dataSet);
@@ -126,7 +121,6 @@ WHERE
             $parser = new ArrayParser($dataRow);
 
             $id = $parser->getIntegerField('id');
-            $userId = $parser->getIntegerField('user_id');
             $shutterId = $parser->getIntegerField('shutter_id');
             $start = $parser->getIntegerField('start');
             $finish = $parser->getIntegerField('finish');
@@ -137,18 +131,9 @@ WHERE
                 ->setId($id)
                 ->setOccupancyTypeId($occupancyTypeId)
                 ->setShutterId($shutterId)
-                ->setStart($start)
-                ->setUserId($userId);
+                ->setStart($start);
 
             $result->push($item);
-        }
-
-        $isSuccess = $this->isSuccess();
-        if ($isSuccess) {
-            $result->setSuccessStatus();
-        }
-        if (!$isSuccess) {
-            $result->setFailStatus();
         }
 
         return $result;
@@ -167,30 +152,23 @@ INSERT INTO
     occupancy_type_id
 )
 VALUES(
-    :USER_ID,
+    (select user_id from session WHERE token = :TOKEN),
     :SHUTTER_ID,
     :START,
     :FINISH,
     :OCCUPANCY_TYPE_ID
 )
-RETURNING 
-    id,
-    user_id,
-    shutter_id,
-    start,
-    finish,
-    occupancy_type_id
 ;
    ';
         $request = $this->prepareRequest($requestText);
 
-        $userId = $lease->getUserId();
+        $token = $lease->getToken();
         $shutterId = $lease->getShutterId();
         $start = $lease->getStart();
         $finish = $lease->getFinish();
         $occupancyTypeId = $lease->getOccupancyTypeId();
 
-        $request->bindValue(':USER_ID', $userId, \PDO::PARAM_INT);
+        $request->bindValue(':TOKEN', $token, \PDO::PARAM_STR);
         $request->bindValue(':SHUTTER_ID', $shutterId, \PDO::PARAM_INT);
         $request->bindValue(':START', $start, \PDO::PARAM_INT);
         $request->bindValue(':FINISH', $finish, \PDO::PARAM_INT);

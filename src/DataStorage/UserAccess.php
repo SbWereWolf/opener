@@ -13,18 +13,13 @@ class UserAccess extends DataAccess
 {
     private function processRead(\PDOStatement $request): self
     {
-        $isSuccess = $this->execute($request);
+        $isSuccess = $this->execute($request)->isSuccess();
 
         if ($isSuccess) {
             $dataSet = $request->fetchAll(\PDO::FETCH_ASSOC);
-            $this->setSuccessStatus();
         }
 
-        if (!$isSuccess) {
-            $this->setFailStatus();
-        }
-
-        $shouldParseData = $this->isSuccess() && $this->getRowCount() > 0;
+        $shouldParseData = $isSuccess && $this->getRowCount() > 0;
         $data = new UserSet();
         if ($shouldParseData) {
             $data = $this->parseOutput($dataSet);
@@ -60,7 +55,7 @@ class UserAccess extends DataAccess
     {
         $requestText = '
 INSERT INTO 
-  \'user\'
+  "user"
 (   
     email,
     secret
@@ -92,7 +87,7 @@ SELECT
     email,
     secret
 FROM 
-  \'user\'
+  "user"
 WHERE
     email = :EMAIL
 ;

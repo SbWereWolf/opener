@@ -163,15 +163,15 @@ VACUUM;
 
     public function process(): Response
     {
-        $method = $this->getRequest()->getMethod();
-        $response = $this->getResponse();
-        switch ($method) {
-            case self::POST:
-                $response = $this->create();
-                break;
-            case self::DELETE:
-                $response = $this->delete();
-                break;
+        $request = $this->getRequest();
+
+        $isPost = $request->isPost();
+        if ($isPost) {
+            $response = $this->create();
+        }
+        $isDelete = $request->isDelete();
+        if ($isDelete) {
+            $response = $this->delete();
         }
 
         return $response;

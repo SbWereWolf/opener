@@ -2,7 +2,9 @@
 
 namespace Environment\Unlock;
 
-use Slim\Http\Request;
+use LanguageFeatures\ArrayParser;
+use Latch\IUnlock;
+use Latch\Unlock;
 
 /**
  * city-call
@@ -11,107 +13,65 @@ use Slim\Http\Request;
  */
 class Reception extends \Environment\Reception
 {
-    const ARTICLE = 'article';
-    const TITLE = 'title';
-    const PRICE = 'price';
-    const DESCRIPTION = 'description';
-    const WEIGHT = 'weight';
+    const POINT = 'point';
+    const SHUTTER_ID = 'shutter-id';
 
-    private $request;
-    private $arguments;
-
-    function __construct(Request $request, array $arguments)
+    private static function getShutterId(ArrayParser $parser): int
     {
-        $this->request = $request;
-        $this->arguments = $arguments;
-    }
-
-    private static function getTitle(ArrayParser $parser): string
-    {
-        $value = $parser->getStringField(self::TITLE);
+        $value = $parser->getIntegerField(self::SHUTTER_ID);
         return $value;
     }
 
-    private static function getPrice(ArrayParser $parser): float
+    private static function getPoint(ArrayParser $parser): string
     {
-        $value = $parser->getFloatField(self::PRICE);
+        $value = $parser->getStringField(self::POINT);
         return $value;
     }
 
-    private static function getDescription(ArrayParser $parser): string
-    {
-        $value = $parser->getStringField(self::DESCRIPTION);
-        return $value;
-    }
-
-    private static function getWeight(ArrayParser $parser): float
-    {
-        $value = $parser->getFloatField(self::WEIGHT);
-        return $value;
-    }
-
-    private static function getArticle(ArrayParser $parser): string
-    {
-        $value = $parser->getStringField(self::ARTICLE);
-        return $value;
-    }
-
-    public function toCreate(): Item
+    public function toCreate(): IUnlock
     {
         $item = $this->setupFromBody();
 
         return $item;
     }
 
-    public function toRead(): Item
+    /**
+     * @return IUnlock
+     */
+    public function toRead(): IUnlock
     {
         $item = $this->setupFromPath();
 
         return $item;
     }
 
-    public function toDelete(): Item
+    public function toDelete(): IUnlock
     {
         $item = $this->setupFromPath();
 
         return $item;
     }
 
-    public function toUpdate(): Item
+    private function setupFromBody(): IUnlock
     {
-        $item = $this->setupFromBody();
-
-        return $item;
-    }
-
-    private function setupFromBody(): Item
-    {
-        $body = $this->request->getParsedBody();
+        $body = $this->getRequest()->getParsedBody();
         $parser = new ArrayParser($body);
 
-        $title = self::getTitle($parser);
-        $price = self::getPrice($parser);
-        $description = self::getDescription($parser);
-        $weight = self::getWeight($parser);
-        $article = self::getArticle($parser);
+        $shutterId = $this->getShutterId($parser);
 
-        $item = (new Item())
-            ->setTitle($title)
-            ->setPrice($price)
-            ->setDescription($description)
-            ->setWeight($weight)
-            ->setArticle($article);
+        $item = (new Unlock())
+            ->setShutterId($shutterId);
 
         return $item;
     }
 
-    private function setupFromPath(): Item
+    private function setupFromPath(): IUnlock
     {
-        $arguments = $this->arguments;
+        $arguments = $this->getArguments();
         $parser = new ArrayParser($arguments);
 
-        $article = self::getArticle($parser);
-        $item = (new Item())->setArticle($article);
+        $point = $this->getPoint($parser);
+        $item = (new Unlock())->setPoint($point);
 
         return $item;
     }

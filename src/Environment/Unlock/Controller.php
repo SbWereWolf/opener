@@ -3,8 +3,8 @@
 namespace Environment\Unlock;
 
 
+use Latch\UnlockManager;
 use Slim\Http\Response;
-use Environment\IController;
 
 /**
  * city-call
@@ -16,69 +16,72 @@ class Controller extends \Environment\Controller
     public function process(): Response
     {
         $request = $this->getRequest();
-        $arguments = $this->getArguments();
-        $reception = new  Reception($request, $arguments);
 
-        $method = $this->getMethod();
-        $response = $this->getResponse();
-        switch ($method) {
-            case self::DELETE:
-                $response = $this->delete($reception);
-                break;
-            case self::GET:
-                $response = $this->read($reception);
-                break;
-            case self::POST:
-                $response = $this->create($reception);
-                break;
-            case self::PUT:
-                $response = $this->update($reception);
-                break;
+        $isGet = $request->isGet();
+        $isDelete = $request->isDelete();
+        $isPost = $request->isPost();
+
+        $isValid = $isGet || $isPost || $isDelete;
+        $reception = null;
+        if ($isValid) {
+            $arguments = $this->getArguments();
+            $reception = new  Reception($request, $arguments);
         }
 
-        return $response;
-    }
+        $response = $this->getResponse();
 
-    private function delete(Reception $reception): Response
-    {
-        $item = $reception->toDelete();
-
-        $logicResult = (new Logic($item, $this->dataPath))->delete();
-
-        $response = (new Presentation($this->response, $logicResult))->fromDelete();
+        if ($isGet) {
+            $response = $this->read($reception);
+        }
+        if ($isPost) {
+            $response = $this->create($reception);
+        }
+        if ($isDelete) {
+            $response = $this->delete($reception);
+        }
 
         return $response;
     }
 
     private function read(Reception $reception): Response
     {
-        $item = $reception->toRead();
+        $pattern = $reception->toRead();
 
-        $logicResult = (new Logic($item, $this->dataPath))->read();
+        $unlockSet = (new UnlockManager($pattern, $this->getDataPath()))->checkPoint();
 
-        $response = (new Presentation($this->response, $logicResult))->fromRead();
+        $response = (new Presentation($this->getRequest(), $this->getResponse(), $unlockSet))->process();
 
         return $response;
     }
 
+    /**
+     * @param Reception $reception
+     * @return Response
+     * @throws \Exception
+     */
     private function create(Reception $reception): Response
     {
         $item = $reception->toCreate();
 
-        $logicResult = (new Logic($item, $this->dataPath))->create();
+        $unlockSet = (new UnlockManager($item, $this->getDataPath()))->scheduleUnlock();
 
-        $response = (new Presentation($this->response, $logicResult))->fromCreate();
+        $response = (new Presentation($this->getRequest(), $this->getResponse(), $unlockSet))->process();
 
         return $response;
     }
 
-    private function update(Reception $reception): Response
+    /**
+     * @param Reception $reception
+     * @return Response
+     * @throws \Exception
+     */
+    private function delete(Reception $reception): Response
     {
-        $item = $reception->toUpdate();
+        $item = $reception->toDelete();
 
-        $logicResult = (new Logic($item, $this->dataPath))->update();
+        $unlockSet = (new UnlockManager($item, $this->getDataPath()))->confirmUnlock();
 
-        $response = (new Presentation($this->response, $logicResult))->fromUpdate();
+        $response = (new Presentation($this->getRequest(), $this->getResponse(), $unlockSet))->process();
 
         return $response;
     }

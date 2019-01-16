@@ -45,7 +45,7 @@ class HttpCode implements IHttpCode
     public function process(bool $isSuccess): Response
     {
         $method = $this->getRequest()->getMethod();
-        $status = $this->calculateStatus($method, $isSuccess);
+        $status = $this->calculateStatus($isSuccess);
         $response = $this->getResponse()->withStatus($status);
 
         return $response;
@@ -59,27 +59,31 @@ class HttpCode implements IHttpCode
         return $this->request;
     }
 
-    private function calculateStatus(string $method, bool $isSuccess): int
+    private function calculateStatus(bool $isSuccess): int
     {
         if (!$isSuccess) {
             $statusCode = self::ERROR;
         }
-        if ($isSuccess) {
-            switch ($method) {
-                case self::POST :
-                    $statusCode = self::POST_OK;
-                    break;
-                case self::GET:
-                    $statusCode = self::COMMON_OK;
-                    break;
-                case self::PUT:
-                    $statusCode = self::COMMON_OK;
-                    break;
-                case self::DELETE:
-                    $statusCode = self::DELETE_OK;
-                    break;
-            }
+
+        $request = $this->getRequest();
+
+        $isGet = $request->isGet();
+        if ($isSuccess && $isGet) {
+            $statusCode = self::COMMON_OK;
         }
+        $isDelete = $request->isDelete();
+        if ($isSuccess && $isDelete) {
+            $statusCode = self::DELETE_OK;
+        }
+        $isPost = $request->isPost();
+        if ($isSuccess && $isPost) {
+            $statusCode = self::POST_OK;
+        }
+        $isPut = $request->isPut();
+        if ($isSuccess && $isPut) {
+            $statusCode = self::COMMON_OK;
+        }
+
         return $statusCode;
     }
 

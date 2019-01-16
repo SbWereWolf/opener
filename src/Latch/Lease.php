@@ -16,6 +16,7 @@ class Lease implements ILease
     private $finish = 0;
     private $occupancyTypeId = 0;
     private $token = '';
+    private $userId = 0;
 
     /**
      * @param int $id
@@ -123,5 +124,23 @@ class Lease implements ILease
     public function getToken(): string
     {
         return $this->token;
+    }
+
+    /**
+     * @param int $userId
+     * @return Lease
+     */
+    public function setUserId(int $userId): ILease
+    {
+        $this->userId = $userId;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getUserId(): int
+    {
+        return $this->userId;
     }
 }
