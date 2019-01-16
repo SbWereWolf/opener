@@ -11,16 +11,9 @@ namespace Latch;
 class User implements IUser
 {
 
-    private $id = 0;
     private $email = '';
     private $secret = '';
     private $password = '';
-
-    public function setId($id): IUser
-    {
-        $this->id = intval($id);
-        return $this;
-    }
 
     public function setEmail($email): IUser
     {
@@ -32,14 +25,6 @@ class User implements IUser
     {
         $this->secret = strval($secret);
         return $this;
-    }
-
-    /**
-     * @return int
-     */
-    public function getId(): int
-    {
-        return $this->id;
     }
 
     /**

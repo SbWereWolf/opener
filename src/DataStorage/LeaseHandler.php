@@ -52,9 +52,7 @@ class LeaseHandler extends DataHandler
 
         $this->begin();
         try {
-            $this->getLeaseAccess()->isLeasePossible($lease);
-
-            $isPossible = $this->getLeaseAccess()->getRowCount() > 0;
+            $isPossible = $this->isLeasePossible($lease);
 
             if ($isPossible) {
                 $result = $this->getLeaseAccess()->insert($lease)->getData();
@@ -74,9 +72,7 @@ class LeaseHandler extends DataHandler
 
         $this->begin();
         try {
-            $this->getLeaseAccess()->isLeasePossible($lease);
-
-            $isPossible = $this->getLeaseAccess()->getRowCount() > 0;
+            $isPossible = $this->isLeasePossible($lease);
 
             if ($isPossible) {
                 $this->getLeaseAccess()->update($lease);
@@ -88,5 +84,18 @@ class LeaseHandler extends DataHandler
         }
 
         return $result;
+    }
+
+    /**
+     * @param ILease $lease
+     * @return bool
+     */
+    private function isLeasePossible(ILease $lease): bool
+    {
+        $this->getLeaseAccess()->findFreeHours($lease);
+
+        $isPossible = $this->getLeaseAccess()->getRowCount() > 0;
+
+        return $isPossible;
     }
 }

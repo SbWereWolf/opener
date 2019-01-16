@@ -11,11 +11,11 @@ use Latch\LeaseSet;
 
 class LeaseAccess extends DataAccess
 {
-    public function isLeasePossible(ILease $lease): self
+    public function findFreeHours(ILease $lease): self
     {
         $requestText = '
 SELECT
-    NULL AS is_possible
+    NULL AS is_free
 WHERE
 EXISTS
     (
@@ -34,24 +34,21 @@ EXISTS
             WHERE
                 (:ID = 0 OR id <> :ID)
                 AND shutter_id = :SHUTTER_ID
-                AND (start < :START AND finish > :START)
-                AND (start < :FINISH AND finish > :FINISH)
+                AND (start < strftime("%s", "now") AND finish > strftime("%s", "now"))
+                AND (start < strftime("%s", "now")+60*30 AND finish > strftime("%s", "now")+60*30)
     )
+LIMIT 1
 ;
    ';
         $request = $this->prepareRequest($requestText);
 
         $id = $lease->getId();
         $shutterId = $lease->getShutterId();
-        $start = $lease->getStart();
-        $finish = $lease->getFinish();
 
         $request->bindValue(':ID', $id, \PDO::PARAM_INT);
         $request->bindValue(':SHUTTER_ID', $shutterId, \PDO::PARAM_INT);
-        $request->bindValue(':START', $start, \PDO::PARAM_INT);
-        $request->bindValue(':FINISH', $finish, \PDO::PARAM_INT);
 
-        $this->processRead($request)->processSuccess();
+        $this->process($request)->processSuccess();
 
         return $this;
     }
@@ -60,16 +57,9 @@ EXISTS
     {
         $requestText = '
 SELECT
-       lo.id                AS id,
-       lo.user_id           AS user_id,
-       lo.shutter_id        AS shutter_id,
-       lo.start             AS start,
-       lo.finish            AS finish,
-       lo.occupancy_type_id AS occupancy_type_id
+       ro.shutter_id AS shutter_id
 FROM
      renting ro
-     join lease lo
-     on lo.shutter_id = ro.shutter_id
 WHERE
     NOT EXISTS (
           SELECT
@@ -79,19 +69,19 @@ WHERE
                join lease li
                on li.shutter_id = ri.shutter_id
           WHERE
-              li.id = lo.id
-            AND li.start < strftime(\'%s\', \'now\')
-            AND strftime(\'%s\', \'now\') < li.finish
+              ro.id = ri.id
+            AND li.start < strftime("%s", "now")
+            AND strftime("%s", "now") < li.finish
         )
 ;
    ';
         $request = $this->prepareRequest($requestText);
-        $this->processRead($request)->processSuccess();
+        $this->processForOutput($request)->processSuccess();
 
         return $this;
     }
 
-    private function processRead(\PDOStatement $request): self
+    private function processForOutput(\PDOStatement $request): self
     {
         $isSuccess = $this->execute($request)->isSuccess();
 
@@ -154,9 +144,9 @@ INSERT INTO
 VALUES(
     (select user_id from session WHERE token = :TOKEN),
     :SHUTTER_ID,
-    :START,
-    :FINISH,
-    :OCCUPANCY_TYPE_ID
+    strftime("%s", "now"),
+    strftime("%s", "now")+60*30,
+    (select id from occupancy_type where code = "BUSY")
 )
 ;
    ';
@@ -164,17 +154,11 @@ VALUES(
 
         $token = $lease->getToken();
         $shutterId = $lease->getShutterId();
-        $start = $lease->getStart();
-        $finish = $lease->getFinish();
-        $occupancyTypeId = $lease->getOccupancyTypeId();
 
         $request->bindValue(':TOKEN', $token, \PDO::PARAM_STR);
         $request->bindValue(':SHUTTER_ID', $shutterId, \PDO::PARAM_INT);
-        $request->bindValue(':START', $start, \PDO::PARAM_INT);
-        $request->bindValue(':FINISH', $finish, \PDO::PARAM_INT);
-        $request->bindValue(':OCCUPANCY_TYPE_ID', $occupancyTypeId, \PDO::PARAM_INT);
 
-        $this->processWrite($request)->processSuccess();
+        $this->process($request)->processSuccess();
 
         return $this;
     }
@@ -192,6 +176,7 @@ SET
     occupancy_type_id = :OCCUPANCY_TYPE_ID
 WHERE 
  id = :ID
+ AND :START < :FINISH
 ;
    ';
         $request = $this->prepareRequest($requestText);
@@ -210,7 +195,7 @@ WHERE
         $request->bindValue(':FINISH', $finish, \PDO::PARAM_INT);
         $request->bindValue(':OCCUPANCY_TYPE_ID', $occupancyTypeId, \PDO::PARAM_INT);
 
-        $this->processWrite($request)->processSuccess();
+        $this->process($request)->processSuccess();
 
         return $this;
     }
@@ -219,25 +204,26 @@ WHERE
     {
         $requestText = '
 SELECT
-       l.id AS id,
-       l.user_id AS user_id,
-       l.shutter_id AS shutter_id,
-       l.start AS start,
-       l.finish AS finish,
-       l.occupancy_type_id AS occupancy_type_id
+       lo.shutter_id AS shutter_id,
+       lo.start AS start,
+       lo.finish AS finish
 FROM
-       lease l
+       lease lo
 WHERE
-       EXISTS(
-         SELECT 
-             NULL 
-         FROM 
-              session 
-         WHERE 
-             token = :TOKEN 
-           AND finish>strftime(\'%s\',\'now\')
-           )
-       AND l.finish>strftime(\'%s\',\'now\')
+    lo.id IN (
+    SELECT
+        li.id 
+    FROM
+        session si
+        join lease li
+        on li.user_id = si.user_id
+    WHERE        
+            si.token = :TOKEN
+        AND si.finish < strftime("%s","now")
+        AND li.finish < strftime("%s","now")          
+        AND li.start > strftime("%s","now")
+    ORDER BY li.id
+    )
 ;
    ';
         $request = $this->prepareRequest($requestText);
@@ -245,7 +231,7 @@ WHERE
         $token = $lease->getToken();
         $request->bindValue(':TOKEN', $token);
 
-        $this->processRead($request)->processSuccess();
+        $this->processForOutput($request)->processSuccess();
 
         return $this;
     }

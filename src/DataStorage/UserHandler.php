@@ -25,7 +25,7 @@ class UserHandler extends DataHandler
         return $result;
     }
 
-    public function startSession(IUser $user, int $duration): Content
+    public function startSession(IUser $user): Content
     {
         $result = new SessionSet();
 
@@ -44,9 +44,7 @@ class UserHandler extends DataHandler
                 /* TODO: Check token for uniqueness against current opened sessions */
                 $email = $user->getEmail();
 
-                $finish = time() + $duration;
-
-                $session = (new Session())->setToken($token)->setFinish($finish)->setEmail($email);
+                $session = (new Session())->setToken($token)->setEmail($email);
 
                 $result = $this->getSessionAccess()->insertWithEmail($session)->getData();
 

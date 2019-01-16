@@ -13,7 +13,7 @@ class SessionAccess extends DataAccess
 {
     public function insertWithEmail(ISession $session): self
     {
-        $requestText = "
+        $requestText = '
 INSERT INTO 
   session
 (   
@@ -23,22 +23,29 @@ INSERT INTO
 )
 VALUES(
     :TOKEN,
-    :FINISH,
-    (select id from 'user' where email = :EMAIL)
+    strftime("%s", "now")+60*15,
+    (select id from "user" where email = :EMAIL)
 )
 ;
-   ";
+   ';
         $request = $this->prepareRequest($requestText);
 
         $token = $session->getToken();
-        $finish = $session->getFinish();
         $email = $session->getEmail();
 
         $request->bindValue(':TOKEN', $token, \PDO::PARAM_STR);
-        $request->bindValue(':FINISH', $finish, \PDO::PARAM_INT);
         $request->bindValue(':EMAIL', $email, \PDO::PARAM_STR);
 
-        $this->processWrite($request)->processSuccess();
+        $this->processForOutput($request)->processSuccess();
+
+        return $this;
+    }
+
+    private function processForOutput(\PDOStatement $request): self
+    {
+        $isSuccess = $this->execute($request)->isSuccess();
+
+        $this->setData(new SessionSet());
 
         return $this;
     }
@@ -66,7 +73,7 @@ VALUES(
 
         $request->bindValue(':TOKEN', $token, \PDO::PARAM_STR);
 
-        $this->processWrite($request)->processSuccess();
+        $this->process($request)->processSuccess();
 
         return $this;
     }
@@ -79,14 +86,14 @@ SELECT
 FROM
     session
 WHERE 
- token = :TOKEN
- AND finish > strftime("%s", "now")
+    token = :TOKEN
+    AND finish > strftime("%s", "now")
 ;
    ';
         $request = $this->prepareRequest($requestText);
 
         $token = $session->getToken();
-        $request->bindValue(':TOKEN', $token, \PDO::PARAM_INT);
+        $request->bindValue(':TOKEN', $token, \PDO::PARAM_STR);
 
         $this->processRead($request)->processSuccess();
 
@@ -146,9 +153,9 @@ WHERE
         $request = $this->prepareRequest($requestText);
 
         $token = $lease->getToken();
-        $request->bindValue(':TOKEN', $token);
+        $request->bindValue(':TOKEN', $token, \PDO::PARAM_STR);
 
-        $this->processWrite($request)->processSuccess();
+        $this->process($request)->processSuccess();
 
         return $this;
     }

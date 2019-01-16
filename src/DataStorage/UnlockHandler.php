@@ -9,8 +9,8 @@ namespace DataStorage;
 
 
 use Latch\Content;
+use Latch\DataSet;
 use Latch\IUnlock;
-use Latch\UnlockSet;
 
 class UnlockHandler extends DataHandler
 {
@@ -18,7 +18,17 @@ class UnlockHandler extends DataHandler
 
     public function read(IUnlock $unlock): Content
     {
-        $result = $this->getUnlockAccess()->selectByPoint($unlock)->getData();
+        $unlockAccess = $this->getUnlockAccess()->selectByPoint($unlock);
+        $isSuccess = $unlockAccess->getRowCount() > 0 && $unlockAccess->isSuccess();
+
+        $result = $unlockAccess->getData();
+        if ($isSuccess) {
+            $result->setSuccessStatus();
+        }
+        if (!$isSuccess) {
+            $result->setFailStatus();
+        }
+
         return $result;
     }
 
@@ -39,16 +49,16 @@ class UnlockHandler extends DataHandler
         return $unlockAccess;
     }
 
-    public function delete(IUnlock $lease): Content
+    public function delete(IUnlock $unlock): Content
     {
-        $result = $this->getUnlockAccess()->delete($lease)->getData();
+        $result = $this->getUnlockAccess()->delete($unlock)->getData();
 
         return $result;
     }
 
     public function create(IUnlock $unlock): Content
     {
-        $result = new UnlockSet();
+        $result = new DataSet();
 
         $this->begin();
         try {

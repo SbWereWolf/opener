@@ -9,8 +9,8 @@ namespace DataStorage;
 
 
 use Latch\Content;
+use Latch\DataSet;
 use Latch\IUnlock;
-use Latch\UnlockSet;
 
 class UnlockAccess extends DataAccess
 {
@@ -33,7 +33,7 @@ VALUES(
 
         $request->bindValue(':SHUTTER_ID', $shutterId, \PDO::PARAM_INT);
 
-        $this->processWrite($request)->processSuccess();
+        $this->process($request)->processSuccess();
 
         return $this;
     }
@@ -62,7 +62,7 @@ WHERE
         $point = $unlock->getPoint();
         $request->bindValue(':POINT', $point, \PDO::PARAM_INT);
 
-        $this->processWrite($request)->processSuccess();
+        $this->process($request)->processSuccess();
 
         return $this;
     }
@@ -106,7 +106,7 @@ LIMIT 1
      */
     private function parseOutput(): Content
     {
-        $result = new UnlockSet();
+        $result = new DataSet();
 
         return $result;
     }

@@ -36,13 +36,9 @@ class UserAccess extends DataAccess
         foreach ($dataSet as $dataRow) {
             $parser = new ArrayParser($dataRow);
 
-            $id = $parser->getIntegerField('id');
-            $email = $parser->getStringField('email');
             $secret = $parser->getStringField('secret');
 
             $item = (new User())
-                ->setId($id)
-                ->setEmail($email)
                 ->setSecret($secret);
 
             $result->push($item);
@@ -74,7 +70,7 @@ VALUES(
         $request->bindValue(':EMAIL', $email, \PDO::PARAM_STR);
         $request->bindValue(':SECRET', $secret, \PDO::PARAM_STR);
 
-        $this->processWrite($request)->processSuccess();
+        $this->process($request)->processSuccess();
 
         return $this;
     }
@@ -83,8 +79,6 @@ VALUES(
     {
         $requestText = '
 SELECT
-    id,
-    email,
     secret
 FROM 
   "user"

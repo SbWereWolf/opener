@@ -4,17 +4,19 @@ namespace Environment;
 
 use Slim\Http\Request;
 use Slim\Http\Response;
+use Slim\Http\StatusCode;
 
 /**
  * city-call
  * Copyright © 2018 Volkhin Nikolay
  * 25.06.18 21:52
  */
-class HttpCode implements IHttpCode
+class HttpCode extends StatusCode implements IHttpCode
 {
 
     private $response = null;
     private $request = null;
+    private $shouldTransformFailToNoData = false;
 
     function __construct(Response $response, Request $request)
     {
@@ -44,7 +46,6 @@ class HttpCode implements IHttpCode
 
     public function process(bool $isSuccess): Response
     {
-        $method = $this->getRequest()->getMethod();
         $status = $this->calculateStatus($isSuccess);
         $response = $this->getResponse()->withStatus($status);
 
@@ -62,26 +63,32 @@ class HttpCode implements IHttpCode
     private function calculateStatus(bool $isSuccess): int
     {
         if (!$isSuccess) {
-            $statusCode = self::ERROR;
+            $statusCode = self::HTTP_INTERNAL_SERVER_ERROR;
         }
 
         $request = $this->getRequest();
 
         $isGet = $request->isGet();
-        if ($isSuccess && $isGet) {
-            $statusCode = self::COMMON_OK;
+        if ($isGet && $isSuccess) {
+            $statusCode = self::HTTP_OK;
         }
+
+        $shouldTransformFailToNotFound = $this->isTransformFailToNotFound();
+        if ($isGet && !$isSuccess && $shouldTransformFailToNotFound) {
+            $statusCode = self::HTTP_NOT_FOUND;
+        }
+
         $isDelete = $request->isDelete();
         if ($isSuccess && $isDelete) {
-            $statusCode = self::DELETE_OK;
+            $statusCode = self::HTTP_NO_CONTENT;
         }
         $isPost = $request->isPost();
         if ($isSuccess && $isPost) {
-            $statusCode = self::POST_OK;
+            $statusCode = self::HTTP_CREATED;
         }
         $isPut = $request->isPut();
         if ($isSuccess && $isPut) {
-            $statusCode = self::COMMON_OK;
+            $statusCode = self::HTTP_OK;
         }
 
         return $statusCode;
@@ -93,6 +100,17 @@ class HttpCode implements IHttpCode
     private function getResponse(): Response
     {
         return $this->response;
+    }
+
+    public function letTransformFailToNotFound(): self
+    {
+        $this->shouldTransformFailToNoData = true;
+        return $this;
+    }
+
+    private function isTransformFailToNotFound(): bool
+    {
+        return $this->shouldTransformFailToNoData;
     }
 
 }

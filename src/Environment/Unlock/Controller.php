@@ -47,9 +47,11 @@ class Controller extends \Environment\Controller
     {
         $pattern = $reception->toRead();
 
-        $unlockSet = (new UnlockManager($pattern, $this->getDataPath()))->checkPoint();
+        $dataSet = (new UnlockManager($pattern, $this->getDataPath()))->checkPoint();
 
-        $response = (new Presentation($this->getRequest(), $this->getResponse(), $unlockSet))->process();
+        $presentation = (new Presentation($this->getRequest(), $this->getResponse(), $dataSet))
+            ->letTransformFailToNotFound();
+        $response = $presentation->process();
 
         return $response;
     }
@@ -63,9 +65,9 @@ class Controller extends \Environment\Controller
     {
         $item = $reception->toCreate();
 
-        $unlockSet = (new UnlockManager($item, $this->getDataPath()))->scheduleUnlock();
+        $dataSet = (new UnlockManager($item, $this->getDataPath()))->scheduleUnlock();
 
-        $response = (new Presentation($this->getRequest(), $this->getResponse(), $unlockSet))->process();
+        $response = (new Presentation($this->getRequest(), $this->getResponse(), $dataSet))->process();
 
         return $response;
     }
@@ -79,9 +81,9 @@ class Controller extends \Environment\Controller
     {
         $item = $reception->toDelete();
 
-        $unlockSet = (new UnlockManager($item, $this->getDataPath()))->confirmUnlock();
+        $dataSet = (new UnlockManager($item, $this->getDataPath()))->confirmUnlock();
 
-        $response = (new Presentation($this->getRequest(), $this->getResponse(), $unlockSet))->process();
+        $response = (new Presentation($this->getRequest(), $this->getResponse(), $dataSet))->process();
 
         return $response;
     }

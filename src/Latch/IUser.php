@@ -25,20 +25,6 @@ namespace Latch;
  */
 interface IUser
 {
-    const PARAM_ID = ':ID';
-    const PARAM_EMAIL = ':EMAIL';
-    const PARAM_SECRET = ':SECRET';
-
-    const COLUMN_ID = 'id';
-    const COLUMN_EMAIL = 'email';
-    const COLUMN_SECRET = 'secret';
-
-    /**
-     * @param int $id
-     * @return User
-     */
-    public function setId($id): IUser;
-
     /**
      * @param string $email
      * @return User
@@ -50,11 +36,6 @@ interface IUser
      * @return User
      */
     public function setSecret($secret): IUser;
-
-    /**
-     * @return int
-     */
-    public function getId(): int;
 
     /**
      * @return string

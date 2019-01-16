@@ -99,6 +99,8 @@ interface ILease extends Token
 
     public function setToken(string $token): self;
 
+    public function getToken(): string;
+
     /**
      * @return int
      */

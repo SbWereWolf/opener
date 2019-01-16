@@ -14,8 +14,8 @@ use Slim\Http\Response;
  */
 class Controller extends \Environment\Controller
 {
-    private $letRetrieveActual = false;
-    private $letRetrieveCurrent = false;
+    private $shouldRetrieveActual = false;
+    private $shouldRetrieveCurrent = false;
 
     public function process(): Response
     {
@@ -128,14 +128,14 @@ class Controller extends \Environment\Controller
 
     public function letRetrieveActual(): self
     {
-        $this->letRetrieveActual = true;
+        $this->shouldRetrieveActual = true;
 
         return $this;
     }
 
     public function letRetrieveCurrent(): self
     {
-        $this->letRetrieveCurrent = true;
+        $this->shouldRetrieveCurrent = true;
 
         return $this;
     }
@@ -145,7 +145,7 @@ class Controller extends \Environment\Controller
      */
     private function isRetrieveActual(): bool
     {
-        return $this->letRetrieveActual;
+        return $this->shouldRetrieveActual;
     }
 
     /**
@@ -153,6 +153,6 @@ class Controller extends \Environment\Controller
      */
     private function isRetrieveCurrent(): bool
     {
-        return $this->letRetrieveCurrent;
+        return $this->shouldRetrieveCurrent;
     }
 }

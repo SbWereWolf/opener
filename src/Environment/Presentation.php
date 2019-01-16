@@ -19,7 +19,7 @@ class Presentation implements \Environment\IPresentation
     /** @var Response $response */
     private $response = null;
     /** @var Request $request */
-    private $request;
+    private $request = null;
 
     public function __construct(Request $request, Response $response, Content $content)
     {
@@ -32,7 +32,7 @@ class Presentation implements \Environment\IPresentation
      * @param array $content
      * @return Presentation
      */
-    private function setContent(Content $content): \Environment\IPresentation
+    private function setContent(Content $content): IPresentation
     {
         $this->content = $content;
         return $this;
@@ -79,7 +79,7 @@ class Presentation implements \Environment\IPresentation
      * @param Response $response
      * @return Presentation
      */
-    protected function setResponse(Response $response): \Environment\IPresentation
+    protected function setResponse(Response $response): IPresentation
     {
         $this->response = $response;
         return $this;
@@ -88,7 +88,7 @@ class Presentation implements \Environment\IPresentation
     /**
      * @return Request
      */
-    public function getRequest(): Request
+    protected function getRequest(): Request
     {
         return $this->request;
     }
@@ -97,7 +97,7 @@ class Presentation implements \Environment\IPresentation
      * @param Request $request
      * @return Presentation
      */
-    public function setRequest(Request $request): Presentation
+    private function setRequest(Request $request): IPresentation
     {
         $this->request = $request;
         return $this;

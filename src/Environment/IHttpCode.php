@@ -11,10 +11,5 @@ use Slim\Http\Response;
  */
 interface IHttpCode
 {
-    const COMMON_OK = 200;
-    const POST_OK = 201;
-    const DELETE_OK = 204;
-    const ERROR = 500;
-
     public function process(bool $isSuccess): Response;
 }

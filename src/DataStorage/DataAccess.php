@@ -62,7 +62,7 @@ class DataAccess
         return $request;
     }
 
-    protected function processWrite(\PDOStatement $request): self
+    protected function process(\PDOStatement $request): self
     {
         $this->execute($request);
         $this->setData(new DataSet());
@@ -84,7 +84,7 @@ class DataAccess
         return $this;
     }
 
-    protected function isSuccess(): bool
+    public function isSuccess(): bool
     {
         return $this->status == true;
 

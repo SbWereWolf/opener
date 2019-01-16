@@ -27,6 +27,8 @@ interface ISession extends Token
 {
     public function setToken(string $token): self;
 
+    public function getToken(): string;
+
     public function setFinish(int $finish): self;
 
     public function getFinish(): int;
