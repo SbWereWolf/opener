@@ -27,7 +27,7 @@ class Router extends \Environment\Router
          *     summary="Finish session",
          *    description="Finish working session of user",
          *     @SWG\Response(
-         *         response=200,
+         *         response=204,
          *         description="Successful operation",
          *     ),
          *     @SWG\Parameter(

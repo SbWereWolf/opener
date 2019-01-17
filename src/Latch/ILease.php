@@ -91,6 +91,15 @@ namespace Latch;
  *       type="integer",
  *   ),
  * )
+ * @SWG\Definition(
+ *   definition="shutter-id",
+ *   type="object",
+ *   description="lease of latch",
+ *   @SWG\Property(
+ *       property="shutter-id",
+ *       type="integer",
+ *   ),
+ * )
  */
 interface ILease extends Token
 {

@@ -12,6 +12,7 @@ use Latch\Content;
 use Latch\IUser;
 use Latch\Session;
 use Latch\SessionSet;
+use Latch\User;
 
 class UserHandler extends DataHandler
 {
@@ -31,8 +32,12 @@ class UserHandler extends DataHandler
 
         $this->begin();
         try {
-            /** @var IUser $storedUser */
-            $storedUser = $this->getUserAccess()->select($user)->getData()->next();
+
+            $storedUser = new User();
+            foreach ($this->getUserAccess()->select($user)->getData()->next() as $dataElement){
+                $storedUser = $dataElement;
+                break;
+            }
 
             $secret = $storedUser->getSecret();
             $password = $user->getPassword();
@@ -49,9 +54,13 @@ class UserHandler extends DataHandler
                 $result = $this->getSessionAccess()->insertWithEmail($session)->getData();
 
                 $result->push($session);
+
+                $this->commit();
             }
 
-            $this->commit();
+            if (!$isValid) {
+                $this->rollBack();
+            }
         } catch (\Exception $e) {
             $this->rollBack();
         }

@@ -87,6 +87,9 @@ WHERE
 
         if ($isSuccess) {
             $dataSet = $request->fetchAll(\PDO::FETCH_ASSOC);
+
+            $rowCount = count($dataSet);
+            $this->setRowCount($rowCount);
         }
 
         $shouldParseData = $isSuccess && $this->getRowCount() > 0;

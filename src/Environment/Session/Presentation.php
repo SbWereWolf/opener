@@ -9,6 +9,7 @@ namespace Environment\Session;
 
 
 use Environment\HttpCode;
+use Presentation\SessionSetView;
 use Slim\Http\Response;
 
 class Presentation extends \Environment\Presentation
@@ -18,8 +19,21 @@ class Presentation extends \Environment\Presentation
      */
     public function process(): Response
     {
+        $shouldAttach = $this->shouldAttach();
+        if ($shouldAttach) {
+            $this->attachContent();
+        }
+
         $response = (new HttpCode($this->getResponse(), $this->getRequest()))->process($this->isSuccess());
 
         return $response;
+    }
+
+    private function attachContent(): \Environment\IPresentation
+    {
+        $asArray = (new SessionSetView($this->getContent()))->toArray();
+        $response = $this->getResponse()->withJson($asArray);
+        $this->setResponse($response);
+        return $this;
     }
 }

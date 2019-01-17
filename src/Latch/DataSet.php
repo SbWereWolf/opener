@@ -24,12 +24,12 @@ class DataSet implements Content
         throw new \Exception('Method push($element) Not Implemented');
     }
 
-    /**
-     * @throws \Exception
-     */
     public function next()
     {
-        throw new \Exception('Method next() Not Implemented');
+        foreach ($this->collection as $element) {
+            yield $element;
+        }
+        return;
     }
 
     public function setSuccessStatus()

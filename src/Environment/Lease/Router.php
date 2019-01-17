@@ -24,9 +24,24 @@ class Router extends \Environment\Router
         $token = $this->token;
         /**
          * @SWG\Get(
-         *    path="/lease/actual/[{token}/]",
+         *    path="/lease/actual/",
          *    summary="Browse whole collection of actual lease suggestion",
-         *    description="Lease suggestion with finish time greater than now",
+         *    description="Shutter free for now",
+         *    @SWG\Response(
+         *        response=200,
+         *        description="Successful operation",
+         *        @SWG\Schema(
+         *            type="array",
+         *            @SWG\Items(ref="#/definitions/shutter-id")
+         *        ),
+         *    ),
+         * )
+         */
+        /**
+         * @SWG\Get(
+         *    path="/lease/actual/{token}/",
+         *    summary="Browse whole collection of actual lease suggestion",
+         *    description="Shutter free for now",
          *    @SWG\Parameter(
          *        name="token",
          *        in="path",
@@ -38,7 +53,7 @@ class Router extends \Environment\Router
          *        description="Successful operation",
          *        @SWG\Schema(
          *            type="array",
-         *            @SWG\Items(ref="#/definitions/lease-with-id")
+         *            @SWG\Items(ref="#/definitions/shutter-id")
          *        ),
          *    ),
          * )
@@ -65,10 +80,6 @@ class Router extends \Environment\Router
          *    @SWG\Response(
          *        response=201,
          *        description="Successful operation",
-         *        @SWG\Schema(
-         *            type="array",
-         *            @SWG\Items(ref="#/definitions/lease-with-id")
-         *        ),
          *    ),
          * )
          */
