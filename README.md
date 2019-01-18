@@ -72,7 +72,7 @@ Open with browser the address 'web/public/path/to/opener/api/dist'
 If necessary, then input into text field web/public/path/to/opener/swagger.json , press 'Explore'
 ## Enjoy!
 # Example of use
-##View free room for lease
+## View free room for lease
 ```
 Request :
 GET "http://local.opener/lease/actual/"
@@ -148,7 +148,7 @@ GET "http://local.opener/lease/current/2y10GHIjbsKUiRU94RVwGhHheE8hWmAz46DlSdmWb
 
 Response :
 Code : 200
-Bode :
+Body :
 [
   {
     "finish": 1547842735,
@@ -161,7 +161,7 @@ Bode :
 ```
 Request :
 POST "http://local.opener/unlock/"
-Bode :
+Body :
 {
   "shutter-id": 1
 }
