@@ -62,15 +62,31 @@ class UnlockHandler extends DataHandler
 
         $this->begin();
         try {
-            $this->getUnlockAccess()->selectByShutter($unlock);
 
-            $isPossible = $this->getUnlockAccess()->getRowCount() == 0;
+            $unlockAccess = $this->getUnlockAccess();
+            $unlockAccess->selectByShutter($unlock);
+
+            $isSuccess = $unlockAccess->isSuccess();
+            $rowCount = $unlockAccess->getRowCount();
+            $isPossible = $rowCount == 0 && $isSuccess;
 
             if ($isPossible) {
-                $this->getUnlockAccess()->insert($unlock);
+                $result = $this->getUnlockAccess()->insert($unlock)->getData();
+
+                $this->commit();
             }
 
-            $this->commit();
+            if (!$isPossible) {
+                $this->rollBack();
+            }
+
+            if ($isSuccess && !$isPossible) {
+                $isSuccess = $rowCount > 0;
+            }
+
+            if($isSuccess){
+                $result->setSuccessStatus();
+            }
         } catch (\Exception $e) {
             $this->rollBack();
         }

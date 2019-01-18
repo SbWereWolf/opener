@@ -73,7 +73,7 @@ VALUES(
         $request->bindValue(':EMAIL', $email, \PDO::PARAM_STR);
         $request->bindValue(':SECRET', $secret, \PDO::PARAM_STR);
 
-        $this->process($request)->processSuccess();
+        $this->processWrite($request)->processSuccess();
 
         return $this;
     }

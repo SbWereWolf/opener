@@ -33,7 +33,7 @@ VALUES(
 
         $request->bindValue(':SHUTTER_ID', $shutterId, \PDO::PARAM_INT);
 
-        $this->process($request)->processSuccess();
+        $this->processWrite($request)->processSuccess();
 
         return $this;
     }
@@ -43,7 +43,7 @@ VALUES(
         $requestText = '
 DELETE
 FROM
-    unlock u
+    unlock
 WHERE 
     EXISTS( 
     SELECT 
@@ -52,17 +52,21 @@ WHERE
         shutter s 
         join unlock u2 on s.id = u2.shutter_id 
     WHERE 
-        u2.shutter_id = u.shutter_id 
+        u2.shutter_id = shutter_id 
         AND s.point = :POINT
     )
 ;
    ';
         $request = $this->prepareRequest($requestText);
 
-        $point = $unlock->getPoint();
-        $request->bindValue(':POINT', $point, \PDO::PARAM_INT);
+        /* TODO : every where to apply this process */
+        $isSuccess = $request !== false;
+        if($isSuccess){
+            $point = $unlock->getPoint();
+            $request->bindValue(':POINT', $point, \PDO::PARAM_STR);
 
-        $this->process($request)->processSuccess();
+            $this->processWrite($request)->processSuccess();
+        }
 
         return $this;
     }
@@ -93,7 +97,14 @@ LIMIT 1
 
     private function processRead(\PDOStatement $request): self
     {
-        $this->execute($request);
+        $isSuccess = $this->execute($request);
+
+        if ($isSuccess) {
+            $dataSet = $request->fetchAll(\PDO::FETCH_ASSOC);
+
+            $rowCount = count($dataSet);
+            $this->setRowCount($rowCount);
+        }
 
         $data = $this->parseOutput();
         $this->setData($data);

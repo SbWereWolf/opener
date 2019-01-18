@@ -48,7 +48,7 @@ LIMIT 1
         $request->bindValue(':ID', $id, \PDO::PARAM_INT);
         $request->bindValue(':SHUTTER_ID', $shutterId, \PDO::PARAM_INT);
 
-        $this->process($request)->processSuccess();
+        $this->processForOutput($request)->processSuccess();
 
         return $this;
     }
@@ -161,7 +161,7 @@ VALUES(
         $request->bindValue(':TOKEN', $token, \PDO::PARAM_STR);
         $request->bindValue(':SHUTTER_ID', $shutterId, \PDO::PARAM_INT);
 
-        $this->process($request)->processSuccess();
+        $this->processWrite($request)->processSuccess();
 
         return $this;
     }
@@ -198,7 +198,7 @@ WHERE
         $request->bindValue(':FINISH', $finish, \PDO::PARAM_INT);
         $request->bindValue(':OCCUPANCY_TYPE_ID', $occupancyTypeId, \PDO::PARAM_INT);
 
-        $this->process($request)->processSuccess();
+        $this->processWrite($request)->processSuccess();
 
         return $this;
     }
@@ -222,9 +222,9 @@ WHERE
         on li.user_id = si.user_id
     WHERE        
             si.token = :TOKEN
-        AND si.finish < strftime("%s","now")
-        AND li.finish < strftime("%s","now")          
-        AND li.start > strftime("%s","now")
+        AND si.finish > strftime("%s","now")
+        AND li.finish > strftime("%s","now")          
+        AND li.start < strftime("%s","now")
     ORDER BY li.id
     )
 ;

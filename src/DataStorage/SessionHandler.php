@@ -27,7 +27,11 @@ class SessionHandler extends DataHandler
             $isValid = $sessionAccess->getRowCount() > 0;
             if ($isValid) {
                 /** @var ISession $storedSession */
-                $storedSession = $sessionAccess->getData()->next();
+                foreach ($sessionAccess->getData()->next() as $dataElement){
+                    $storedSession = $dataElement;
+                    break;
+                }
+
 
                 $isValid = $storedSession->getFinish() > 0;
             }

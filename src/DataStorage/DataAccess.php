@@ -62,9 +62,13 @@ class DataAccess
         return $request;
     }
 
-    protected function process(\PDOStatement $request): self
+    protected function processWrite(\PDOStatement $request): self
     {
         $this->execute($request);
+
+        $rowCount = $request->rowCount();
+        $this->setRowCount($rowCount);
+
         $this->setData(new DataSet());
 
         return $this;
@@ -123,8 +127,6 @@ class DataAccess
     protected function execute(\PDOStatement $request): self
     {
         $isSuccess = $request->execute();
-        $rowCount = $request->rowCount();
-        $this->setRowCount($rowCount);
 
         if ($isSuccess) {
             $this->setSuccessStatus();

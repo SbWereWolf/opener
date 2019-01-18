@@ -17,30 +17,29 @@ class Router extends \Environment\Router
     private $root = '/unlock/';
     private $point = '{point}/';
 
-    /**
-     * @SWG\Post(
-     *    path="/unlock/",
-     *     summary="Schedule unlock",
-     *    description="Schedule unlock of given point",
-     *     @SWG\Parameter(
-     *         name="shutter-id",
-     *         in="body",
-     *         description="properties of content for update",
-     *         required=true,
-     *         @SWG\Schema(ref="#/definitions/shutter-id"),
-     *     ),
-     *     @SWG\Response(
-     *         response=201,
-     *         description="Successful operation",
-     *     ),
-     * )
-     */
     public function settingUpRoutes(): Routing
     {
         $app = $this->getHandler();
         $root = $this->root;
         $point = $this->point;
-
+        /**
+         * @SWG\Post(
+         *    path="/unlock/",
+         *     summary="Schedule unlock",
+         *    description="Schedule unlock of given point",
+         *     @SWG\Parameter(
+         *         name="shutter-id",
+         *         in="body",
+         *         description="properties of content for update",
+         *         required=true,
+         *         @SWG\Schema(ref="#/definitions/shutter-id"),
+         *     ),
+         *     @SWG\Response(
+         *         response=201,
+         *         description="Successful operation",
+         *     ),
+         * )
+         */
         $app->post($root, function (Request $request, Response $response, array $arguments) {
 
             $response = (new Controller($request, $response, $arguments, DATA_PATH))

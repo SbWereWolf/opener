@@ -73,7 +73,7 @@ VALUES(
 
         $request->bindValue(':TOKEN', $token, \PDO::PARAM_STR);
 
-        $this->process($request)->processSuccess();
+        $this->processWrite($request)->processSuccess();
 
         return $this;
     }
@@ -106,6 +106,9 @@ WHERE
 
         if ($isSuccess) {
             $dataSet = $request->fetchAll(\PDO::FETCH_ASSOC);
+
+            $rowCount = count($dataSet);
+            $this->setRowCount($rowCount);
         }
 
         $shouldParseData = $isSuccess && $this->getRowCount() > 0;
@@ -155,7 +158,7 @@ WHERE
         $token = $lease->getToken();
         $request->bindValue(':TOKEN', $token, \PDO::PARAM_STR);
 
-        $this->process($request)->processSuccess();
+        $this->processWrite($request)->processSuccess();
 
         return $this;
     }
