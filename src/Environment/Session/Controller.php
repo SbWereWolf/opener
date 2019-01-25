@@ -3,7 +3,9 @@
 namespace Environment\Session;
 
 
-use Latch\SessionManager;
+use BusinessLogic\Session\ISession;
+use BusinessLogic\Session\SessionManager;
+use Environment\Basis\Presentation;
 use Slim\Http\Response;
 
 /**
@@ -11,7 +13,7 @@ use Slim\Http\Response;
  * Copyright © 2018 Volkhin Nikolay
  * 25.06.18 21:53
  */
-class Controller extends \Environment\Controller
+class Controller extends \Environment\Basis\Controller
 {
     public function process(): Response
     {
@@ -37,7 +39,7 @@ class Controller extends \Environment\Controller
      */
     private function delete(Reception $reception): Response
     {
-        /** @var \Latch\ISession $item */
+        /** @var ISession $item */
         $item = $reception->toDelete();
 
         $content = (new SessionManager($item, $this->getDataPath()))->finish();

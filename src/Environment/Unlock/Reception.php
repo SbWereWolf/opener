@@ -2,16 +2,17 @@
 
 namespace Environment\Unlock;
 
+
+use BusinessLogic\Unlock\IUnlock;
+use BusinessLogic\Unlock\Unlock;
 use LanguageFeatures\ArrayParser;
-use Latch\IUnlock;
-use Latch\Unlock;
 
 /**
  * city-call
  * Copyright © 2018 Volkhin Nikolay
  * 25.06.18 21:53
  */
-class Reception extends \Environment\Reception
+class Reception extends \Environment\Basis\Reception
 {
     const POINT = 'point';
     const SHUTTER_ID = 'shutter-id';

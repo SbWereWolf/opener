@@ -8,12 +8,11 @@
 namespace Environment\Lease;
 
 
-use Environment\HttpCode;
-use Environment\IPresentation;
-use Presentation\LeaseSetView;
+use Environment\Basis\HttpCode;
+use Environment\Basis\IPresentation;
 use Slim\Http\Response;
 
-class Presentation extends \Environment\Presentation
+class Presentation extends \Environment\Basis\Presentation
 {
     /**
      * @return Response
@@ -33,7 +32,7 @@ class Presentation extends \Environment\Presentation
     /**
      * @return IPresentation
      */
-    private function attachContent(): \Environment\IPresentation
+    private function attachContent(): IPresentation
     {
         $asArray = (new LeaseSetView($this->getContent()))->toArray();
         $response = $this->getResponse()->withJson($asArray);

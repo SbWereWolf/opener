@@ -2,16 +2,16 @@
 
 namespace Environment\Lease;
 
+use BusinessLogic\Lease\ILease;
+use BusinessLogic\Lease\Lease;
 use LanguageFeatures\ArrayParser;
-use Latch\ILease;
-use Latch\Lease;
 
 /**
  * city-call
  * Copyright © 2018 Volkhin Nikolay
  * 25.06.18 21:53
  */
-class Reception extends \Environment\Reception
+class Reception extends \Environment\Basis\Reception
 {
     const ID = 'id';
     const USER_ID = 'user-id';
@@ -65,7 +65,7 @@ class Reception extends \Environment\Reception
     }
 
     /**
-     * @return Lease
+     * @return ILease
      */
     public function toRead(): ILease
     {

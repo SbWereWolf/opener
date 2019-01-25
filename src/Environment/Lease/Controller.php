@@ -3,8 +3,8 @@
 namespace Environment\Lease;
 
 
-use Latch\LeaseManager;
-use Latch\LeaseSet;
+use BusinessLogic\Lease\ILease;
+use BusinessLogic\Lease\LeaseProcess;
 use Slim\Http\Response;
 
 /**
@@ -12,7 +12,7 @@ use Slim\Http\Response;
  * Copyright © 2018 Volkhin Nikolay
  * 25.06.18 21:53
  */
-class Controller extends \Environment\Controller
+class Controller extends \Environment\Basis\Controller
 {
     private $shouldRetrieveActual = false;
     private $shouldRetrieveCurrent = false;
@@ -55,13 +55,11 @@ class Controller extends \Environment\Controller
 
     private function retrieveActual(Reception $reception): Response
     {
-        $pattern = $reception->toRead();
+        $item = $reception->toRead();
 
-        $token = $pattern->getToken();
+        $token = $item->getToken();
         $dataPath = $this->getDataPath();
-        $isSuccess = $this->prolongSession($token, $dataPath);
-
-        $leaseSet = (new LeaseManager($pattern, $dataPath))->retrieveActual();
+        $leaseSet = (new LeaseProcess($item))->retrieveActual($dataPath, $token);
 
         $response = (new Presentation($this->getRequest(), $this->getResponse(), $leaseSet))->process();
 
@@ -70,16 +68,12 @@ class Controller extends \Environment\Controller
 
     private function retrieveCurrent(Reception $reception): Response
     {
-        $pattern = $reception->toRead();
+        $item = $reception->toRead();
 
-        $token = $pattern->getToken();
+        $token = $item->getToken();
         $dataPath = $this->getDataPath();
-        $isSuccess = $this->prolongSession($token, $dataPath);
 
-        $leaseSet = new LeaseSet();
-        if ($isSuccess) {
-            $leaseSet = (new LeaseManager($pattern, $this->getDataPath()))->retrieveCurrent();
-        }
+        $leaseSet = (new LeaseProcess($item))->retrieveCurrent($dataPath, $token);
 
         $response = (new Presentation($this->getRequest(), $this->getResponse(), $leaseSet))->process();
 
@@ -97,12 +91,7 @@ class Controller extends \Environment\Controller
 
         $token = $item->getToken();
         $dataPath = $this->getDataPath();
-        $isSuccess = $this->prolongSession($token, $dataPath);
-
-        $leaseSet = new LeaseSet();
-        if ($isSuccess) {
-            $leaseSet = (new LeaseManager($item, $this->getDataPath()))->create();
-        }
+        $leaseSet = (new LeaseProcess($item))->addNewLease($dataPath, $token);
 
         $response = (new Presentation($this->getRequest(), $this->getResponse(), $leaseSet))->process();
 
@@ -116,10 +105,10 @@ class Controller extends \Environment\Controller
      */
     private function update(Reception $reception): Response
     {
-        /** @var \Latch\Lease $item */
+        /** @var ILease $item */
         $item = $reception->toUpdate();
 
-        $leaseSet = (new LeaseManager($item, $this->getDataPath()))->update();
+        $leaseSet = (new LeaseProcess($item))->overwriteLease($this->getDataPath());
 
         $response = (new Presentation($this->getRequest(), $this->getResponse(), $leaseSet))->process();
 

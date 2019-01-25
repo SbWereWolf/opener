@@ -19,9 +19,9 @@
       "DataStorage\\": ["src/DataStorage"],
       "Environment\\": ["src/Environment"],
       "LanguageFeatures\\": ["src/LanguageFeatures"],
-      "Latch\\": ["src/Latch"],
-      "Presentation\\": ["src/Presentation"],
-      "Session\\": ["src/Session"]
+      "BusinessLogic\\": [
+        "src/BusinessLogic"
+      ]
     }
   }
 }

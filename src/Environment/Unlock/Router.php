@@ -8,11 +8,11 @@
 namespace Environment\Unlock;
 
 
-use Environment\Routing;
+use Environment\Basis\Routing;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class Router extends \Environment\Router
+class Router extends \Environment\Basis\Router
 {
     private $root = '/unlock/';
     private $point = '{point}/';

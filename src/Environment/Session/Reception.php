@@ -2,16 +2,17 @@
 
 namespace Environment\Session;
 
+
+use BusinessLogic\Session\ISession;
+use BusinessLogic\Session\Session;
 use LanguageFeatures\ArrayParser;
-use Latch\ISession;
-use Latch\Session;
 
 /**
  * city-call
  * Copyright © 2018 Volkhin Nikolay
  * 25.06.18 21:53
  */
-class Reception extends \Environment\Reception
+class Reception extends \Environment\Basis\Reception
 {
     const TOKEN = 'token';
 

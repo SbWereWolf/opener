@@ -8,10 +8,10 @@
 namespace Environment\Unlock;
 
 
-use Environment\HttpCode;
+use Environment\Basis\HttpCode;
 use Slim\Http\Response;
 
-class Presentation extends \Environment\Presentation
+class Presentation extends \Environment\Basis\Presentation
 {
 
     private $shouldTransformFailToNotFound = false;

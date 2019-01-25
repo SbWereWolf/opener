@@ -8,15 +8,16 @@
 namespace Environment\Session;
 
 
+use Environment\Basis\Routing;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class Router extends \Environment\Router
+class Router extends \Environment\Basis\Router
 {
     private $root = '/session/';
     private $token = '{token}/';
 
-    public function settingUpRoutes(): \Environment\Routing
+    public function settingUpRoutes(): Routing
     {
         $app = $this->getHandler();
         $root = $this->root;

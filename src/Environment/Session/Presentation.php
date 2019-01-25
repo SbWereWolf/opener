@@ -8,11 +8,11 @@
 namespace Environment\Session;
 
 
-use Environment\HttpCode;
-use Presentation\SessionSetView;
+use Environment\Basis\HttpCode;
+use Environment\Basis\IPresentation;
 use Slim\Http\Response;
 
-class Presentation extends \Environment\Presentation
+class Presentation extends \Environment\Basis\Presentation
 {
     /**
      * @return Response
@@ -29,7 +29,7 @@ class Presentation extends \Environment\Presentation
         return $response;
     }
 
-    private function attachContent(): \Environment\IPresentation
+    private function attachContent(): IPresentation
     {
         $asArray = (new SessionSetView($this->getContent()))->toArray();
         $response = $this->getResponse()->withJson($asArray);

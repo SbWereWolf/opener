@@ -3,8 +3,8 @@
 namespace Environment\User;
 
 
+use BusinessLogic\User\UserManager;
 use Environment\Session;
-use Latch\UserManager;
 use Slim\Http\Response;
 
 /**
@@ -12,7 +12,7 @@ use Slim\Http\Response;
  * Copyright © 2018 Volkhin Nikolay
  * 25.06.18 21:53
  */
-class Controller extends \Environment\Controller
+class Controller extends \Environment\Basis\Controller
 {
     const LOG_IN = 'login/';
 
@@ -23,6 +23,7 @@ class Controller extends \Environment\Controller
 
         $reception = null;
         $shouldProcess = false;
+        $shouldLogIn = false;
         if ($isPost) {
             $shouldLogIn = $this->isLogIn();
 

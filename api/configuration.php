@@ -5,6 +5,7 @@
  * DateTime: 02.01.2019 16:12
  */
 
+use Environment\Setup\Setup;
 use Slim\Container;
 
 define('APPLICATION_ROOT', realpath(__DIR__) . DIRECTORY_SEPARATOR . '..');
@@ -22,8 +23,8 @@ $container = new Container(['settings' => $configuration]);
 
 $app = null;
 try {
-    $app = (new \Environment\RouteSet(new \Slim\App($container)))
-        ->setUp();
+    $app = (new Setup(new \Slim\App($container)))
+        ->perform();
 } catch (Exception $e) {
     echo $e->getMessage();
 }

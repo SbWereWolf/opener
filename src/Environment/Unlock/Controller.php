@@ -3,7 +3,7 @@
 namespace Environment\Unlock;
 
 
-use Latch\UnlockManager;
+use BusinessLogic\Unlock\UnlockManager;
 use Slim\Http\Response;
 
 /**
@@ -11,7 +11,7 @@ use Slim\Http\Response;
  * Copyright © 2018 Volkhin Nikolay
  * 25.06.18 21:53
  */
-class Controller extends \Environment\Controller
+class Controller extends \Environment\Basis\Controller
 {
     public function process(): Response
     {

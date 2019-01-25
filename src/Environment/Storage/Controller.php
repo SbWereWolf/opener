@@ -10,7 +10,7 @@ use Slim\Http\Response;
  * Copyright © 2018 Volkhin Nikolay
  * 25.06.18 21:53
  */
-class Controller extends \Environment\Controller
+class Controller extends \Environment\Basis\Controller
 {
     const INSTALL = '
 CREATE TABLE IF NOT EXISTS occupancy_type
@@ -170,6 +170,7 @@ VACUUM;
     public function process(): Response
     {
         $request = $this->getRequest();
+        $response = $this->getResponse();
 
         $isPost = $request->isPost();
         if ($isPost) {

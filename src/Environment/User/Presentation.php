@@ -8,11 +8,10 @@
 namespace Environment\User;
 
 
-use Environment\HttpCode;
-use Presentation\UserSetView;
+use Environment\Basis\HttpCode;
 use Slim\Http\Response;
 
-class Presentation extends \Environment\Presentation
+class Presentation extends \Environment\Basis\Presentation
 {
     /**
      * @return Response

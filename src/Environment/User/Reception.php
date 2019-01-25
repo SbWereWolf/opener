@@ -3,16 +3,16 @@
 namespace Environment\User;
 
 
+use BusinessLogic\User\IUser;
+use BusinessLogic\User\User;
 use LanguageFeatures\ArrayParser;
-use Latch\IUser;
-use Latch\User;
 
 /**
  * city-call
  * Copyright © 2018 Volkhin Nikolay
  * 25.06.18 21:53
  */
-class Reception extends \Environment\Reception
+class Reception extends \Environment\Basis\Reception
 {
     const EMAIL = 'email';
     const PASSWORD = 'password';
