@@ -53,6 +53,13 @@ class SessionHandler extends DataHandler
     {
         $result = $this->getSessionAccess()->delete($session)->getData();
 
+        $isSuccess = $result->isSuccess();
+        if($isSuccess){
+            session_start();
+            session_destroy();
+        }
+
+
         return $result;
     }
 

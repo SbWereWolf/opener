@@ -46,10 +46,9 @@ class UserHandler extends DataHandler
             $isValid = password_verify($password, $secret);
 
             if ($isValid) {
-                $token = password_hash($secret, PASSWORD_DEFAULT);
-                $token = str_replace(' ', '-', $token); // Replaces all spaces with hyphens.
-                $token = preg_replace('/[^A-Za-z0-9\-]/', '', $token); // Removes special chars.
-                /* TODO: Check token for uniqueness against current opened sessions */
+                session_start();
+                $token = session_id();
+                session_write_close();
                 $email = $user->getEmail();
 
                 $session = (new Session())->setToken($token)->setEmail($email);
