@@ -10,12 +10,16 @@ namespace DataStorage\Unlock;
 
 use BusinessLogic\Basis\Content;
 use BusinessLogic\Basis\DataSet;
+use BusinessLogic\Lease\ILease;
+use BusinessLogic\Lease\Lease;
 use BusinessLogic\Unlock\IUnlock;
 use DataStorage\Basis\DataHandler;
+use DataStorage\Lease\LeaseAccess;
 
 class UnlockHandler extends DataHandler
 {
     private $unlockAccess = null;
+    private $leaseAccess = null;
 
     public function read(IUnlock $unlock): Content
     {
@@ -50,6 +54,19 @@ class UnlockHandler extends DataHandler
         return $unlockAccess;
     }
 
+    private function getLeaseAccess(): LeaseAccess
+    {
+        $leaseAccess = $this->leaseAccess;
+        $isExists = !empty($leaseAccess);
+
+        if (!$isExists) {
+            $access = $this->getAccess();
+            $leaseAccess = new LeaseAccess($access);
+            $this->leaseAccess = $leaseAccess;
+        }
+
+        return $leaseAccess;
+    }
     public function delete(IUnlock $unlock): Content
     {
         $result = $this->getUnlockAccess()->delete($unlock)->getData();
@@ -64,16 +81,15 @@ class UnlockHandler extends DataHandler
         $this->begin();
         try {
 
-            $unlockAccess = $this->getUnlockAccess();
-            $unlockAccess->selectByShutter($unlock);
+            $isOwn = $this->isOwnLease($unlock);
 
-            $isSuccess = $unlockAccess->isSuccess();
-            $rowCount = $unlockAccess->getRowCount();
-            $isPossible = $rowCount == 0 && $isSuccess;
+            $isPossible = false;
+            if ($isOwn) {
+                $isPossible = $this->isUnlockingPossible($unlock);
+            }
 
             if ($isPossible) {
                 $result = $this->getUnlockAccess()->insert($unlock)->getData();
-
                 $this->commit();
             }
 
@@ -81,8 +97,9 @@ class UnlockHandler extends DataHandler
                 $this->rollBack();
             }
 
-            if ($isSuccess && !$isPossible) {
-                $isSuccess = $rowCount > 0;
+            $isSuccess = false;
+            if ($isOwn && !$isPossible) {
+                $isSuccess = $this->getUnlockAccess()->getRowCount() > 0;
             }
 
             if($isSuccess){
@@ -93,6 +110,51 @@ class UnlockHandler extends DataHandler
         }
 
         return $result;
+    }
+
+    /**
+     * @param IUnlock $unlock
+     * @return array
+     */
+    private function isOwnLease(IUnlock $unlock): bool
+    {
+        $lease = (new Lease())
+            ->setToken($unlock->getToken())
+            ->setId($unlock->getLeaseId());
+
+        $leaseAccess = $this->getLeaseAccess();
+        $leaseAccess->getShutterId($lease);
+
+        $isSuccess = $leaseAccess->isSuccess();
+        $shutterCount = $leaseAccess->getRowCount();
+        $isOwn = $shutterCount > 0 && $isSuccess;
+
+
+        return $isOwn;
+    }
+
+    /**
+     * @param IUnlock $unlock
+     * @return bool
+     */
+    private function isUnlockingPossible(IUnlock $unlock): bool
+    {
+        $leaseSet = $this->getLeaseAccess()->getData();
+        foreach ($leaseSet->next() as $element) {
+            /** @var ILease $element */
+            $unlock->setShutterId($element->getShutterId());
+            break;
+        }
+
+        $unlockAccess = $this->getUnlockAccess();
+        $unlockAccess->selectByShutter($unlock);
+
+        $isSuccess = $unlockAccess->isSuccess();
+        $unlockCount = $unlockAccess->getRowCount();
+        $isPossible = $unlockCount == 0 && $isSuccess;
+
+
+        return $isPossible;
     }
 
 

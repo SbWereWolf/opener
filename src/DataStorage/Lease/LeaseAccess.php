@@ -12,6 +12,34 @@ use LanguageFeatures\ArrayParser;
 
 class LeaseAccess extends DataAccess
 {
+    public function getShutterId(ILease $lease): self
+    {
+        $requestText = '
+SELECT
+    l.shutter_id as shutter_id
+FROM
+     lease l
+     JOIN session s
+     on l.user_id = s.user_id
+WHERE 
+    l.id = :ID
+    AND s.token = :TOKEN
+LIMIT 1
+;
+   ';
+        $request = $this->prepareRequest($requestText);
+
+        $id = $lease->getId();
+        $token = $lease->getToken();
+
+        $request->bindValue(':ID', $id, \PDO::PARAM_INT);
+        $request->bindValue(':TOKEN', $token, \PDO::PARAM_STR);
+
+        $this->processForOutput($request)->processSuccess();
+
+        return $this;
+    }
+    
     public function findFreeHours(ILease $lease): self
     {
         $requestText = '
@@ -209,7 +237,7 @@ WHERE
     {
         $requestText = '
 SELECT
-       lo.shutter_id AS shutter_id,
+       lo.id AS id,
        lo.start AS start,
        lo.finish AS finish
 FROM

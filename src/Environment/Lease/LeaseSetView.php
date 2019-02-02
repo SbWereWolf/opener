@@ -14,6 +14,7 @@ use BusinessLogic\Lease\ILease;
 class LeaseSetView implements \Environment\Basis\View
 {
     const SHUTTER_ID = 'shutter-id';
+    const LEASE_ID = 'lease-id';
     const START = 'start';
     const FINISH = 'finish';
 
@@ -34,9 +35,10 @@ class LeaseSetView implements \Environment\Basis\View
         foreach ($this->dataSet->next() as $element) {
             /** @var ILease $element */
             $record = array(
-                self::FINISH => $element->getFinish(),
                 self::SHUTTER_ID => $element->getShutterId(),
+                self::LEASE_ID => $element->getId(),
                 self::START => $element->getStart(),
+                self::FINISH => $element->getFinish(),
             );
 
             $collection[] = $record;

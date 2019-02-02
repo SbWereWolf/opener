@@ -8,6 +8,17 @@
 namespace BusinessLogic\Session;
 
 
+/**
+ * @SWG\Definition(
+ *   definition="token",
+ *   type="string",
+ *   description="session of user",
+ *   @SWG\Property(
+ *       property="token",
+ *       type="string",
+ *   ),
+ * )
+ */
 interface Token
 {
 

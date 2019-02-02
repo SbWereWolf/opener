@@ -24,15 +24,15 @@ class Router extends \Environment\Basis\Router
         $point = $this->point;
         /**
          * @SWG\Post(
-         *    path="/unlock/",
+         *     path="/unlock/",
          *     summary="Schedule unlock",
-         *    description="Schedule unlock of given point",
+         *     description="Schedule unlock of given lease",
          *     @SWG\Parameter(
-         *         name="shutter-id",
+         *         name="unlock",
          *         in="body",
-         *         description="properties of content for update",
+         *         description="properties of unlocking task",
          *         required=true,
-         *         @SWG\Schema(ref="#/definitions/shutter-id"),
+         *         @SWG\Schema(ref="#/definitions/unlock"),
          *     ),
          *     @SWG\Response(
          *         response=201,

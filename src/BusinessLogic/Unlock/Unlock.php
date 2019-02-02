@@ -12,6 +12,8 @@ class Unlock implements IUnlock
 {
     private $point = '';
     private $shutterId = 0;
+    private $leaseId = 0;
+    private $token = '';
 
     /**
      * @return string
@@ -47,5 +49,38 @@ class Unlock implements IUnlock
     {
         $this->shutterId = $shutterId;
         return $this;
+    }
+
+    public function getLeaseId(): int
+    {
+        return $this->leaseId;
+    }
+
+    /**
+     * @param int $leaseId
+     * @return Unlock
+     */
+    public function setLeaseId(int $leaseId): IUnlock
+    {
+        $this->leaseId = $leaseId;
+        return $this;
+    }
+
+    /**
+     * @param string $token
+     * @return Unlock
+     */
+    public function setToken(string $token): IUnlock
+    {
+        $this->token = $token;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getToken(): string
+    {
+        return $this->token;
     }
 }

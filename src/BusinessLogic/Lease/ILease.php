@@ -96,7 +96,7 @@ use BusinessLogic\Session\Token;
  * @SWG\Definition(
  *   definition="shutter-id",
  *   type="object",
- *   description="lease of latch",
+ *   description="shutter of latch",
  *   @SWG\Property(
  *       property="shutter-id",
  *       type="integer",

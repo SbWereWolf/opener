@@ -3,7 +3,7 @@
 namespace Environment\Unlock;
 
 
-use BusinessLogic\Unlock\UnlockManager;
+use BusinessLogic\Unlock\UnlockProcess;
 use Slim\Http\Response;
 
 /**
@@ -47,7 +47,7 @@ class Controller extends \Environment\Basis\Controller
     {
         $pattern = $reception->toRead();
 
-        $dataSet = (new UnlockManager($pattern, $this->getDataPath()))->checkPoint();
+        $dataSet = (new UnlockProcess($pattern))->checkPoint($this->getDataPath());
 
         $presentation = (new Presentation($this->getRequest(), $this->getResponse(), $dataSet))
             ->letTransformFailToNotFound();
@@ -65,7 +65,9 @@ class Controller extends \Environment\Basis\Controller
     {
         $item = $reception->toCreate();
 
-        $dataSet = (new UnlockManager($item, $this->getDataPath()))->scheduleUnlock();
+        $dataPath = $this->getDataPath();
+        $token = $item->getToken();
+        $dataSet = (new UnlockProcess($item))->scheduleUnlock($dataPath, $token);
 
         $response = (new Presentation($this->getRequest(), $this->getResponse(), $dataSet))->process();
 
@@ -81,7 +83,7 @@ class Controller extends \Environment\Basis\Controller
     {
         $item = $reception->toDelete();
 
-        $dataSet = (new UnlockManager($item, $this->getDataPath()))->confirmUnlock();
+        $dataSet = (new UnlockProcess($item))->confirmUnlock($this->getDataPath());
 
         $response = (new Presentation($this->getRequest(), $this->getResponse(), $dataSet))->process();
 

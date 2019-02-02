@@ -24,19 +24,19 @@ class Router extends \Environment\Basis\Router
         $token = $this->token;
         /**
          * @SWG\Delete(
-         *    path="/session/{token}/",
+         *     path="/session/{token}/",
          *     summary="Finish session",
-         *    description="Finish working session of user",
-         *     @SWG\Response(
-         *         response=204,
-         *         description="Successful operation",
-         *     ),
+         *     description="Finish working session of user",
          *     @SWG\Parameter(
          *         name="token",
          *         in="path",
          *         type="string",
          *         description="token of working session of user",
          *         required=true,
+         *     ),
+         *     @SWG\Response(
+         *         response=204,
+         *         description="Successful operation",
          *     ),
          * )
          */

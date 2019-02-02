@@ -15,17 +15,24 @@ use LanguageFeatures\ArrayParser;
 class Reception extends \Environment\Basis\Reception
 {
     const POINT = 'point';
-    const SHUTTER_ID = 'shutter-id';
+    const LEASE_ID = 'lease-id';
+    const TOKEN = 'token';
 
-    private static function getShutterId(ArrayParser $parser): int
+    private function getLeaseId(): int
     {
-        $value = $parser->getIntegerField(self::SHUTTER_ID);
+        $value = $this->getParser()->getIntegerField(self::LEASE_ID);
         return $value;
     }
 
-    private static function getPoint(ArrayParser $parser): string
+    private function getToken(): string
     {
-        $value = $parser->getStringField(self::POINT);
+        $value = $this->getParser()->getStringField(self::TOKEN);
+        return $value;
+    }
+
+    private function getPoint(): string
+    {
+        $value = $this->getParser()->getStringField(self::POINT);
         return $value;
     }
 
@@ -56,12 +63,14 @@ class Reception extends \Environment\Basis\Reception
     private function setupFromBody(): IUnlock
     {
         $body = $this->getRequest()->getParsedBody();
-        $parser = new ArrayParser($body);
+        $this->setParser(new ArrayParser($body));
 
-        $shutterId = $this->getShutterId($parser);
+        $leaseId = $this->getLeaseId();
+        $token = $this->getToken();
 
         $item = (new Unlock())
-            ->setShutterId($shutterId);
+            ->setLeaseId($leaseId)
+            ->setToken($token);
 
         return $item;
     }
@@ -69,9 +78,9 @@ class Reception extends \Environment\Basis\Reception
     private function setupFromPath(): IUnlock
     {
         $arguments = $this->getArguments();
-        $parser = new ArrayParser($arguments);
+        $this->setParser(new ArrayParser($arguments));
 
-        $point = $this->getPoint($parser);
+        $point = $this->getPoint();
         $item = (new Unlock())->setPoint($point);
 
         return $item;
