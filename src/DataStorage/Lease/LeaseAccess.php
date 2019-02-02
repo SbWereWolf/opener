@@ -5,6 +5,7 @@ namespace DataStorage\Lease;
 
 use BusinessLogic\Basis\Content;
 use BusinessLogic\Lease\ILease;
+use BusinessLogic\Lease\Lease;
 use BusinessLogic\Lease\LeaseSet;
 use DataStorage\Basis\DataAccess;
 use LanguageFeatures\ArrayParser;

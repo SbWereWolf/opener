@@ -5,7 +5,6 @@ namespace Environment\Session;
 
 use BusinessLogic\Session\ISession;
 use BusinessLogic\Session\SessionManager;
-use Environment\Basis\Presentation;
 use Slim\Http\Response;
 
 /**
