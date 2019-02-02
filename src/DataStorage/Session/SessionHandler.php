@@ -55,8 +55,8 @@ class SessionHandler extends DataHandler
 
         $isSuccess = $result->isSuccess();
         if($isSuccess){
-            session_start();
-            session_destroy();
+            @session_start();
+            @session_destroy();
         }
 
 

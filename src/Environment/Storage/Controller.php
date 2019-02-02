@@ -12,131 +12,132 @@ use Slim\Http\Response;
  */
 class Controller extends \Environment\Basis\Controller
 {
-    const INSTALL = '
+    const INSTALL = "
 CREATE TABLE IF NOT EXISTS occupancy_type
 (
-    id INTEGER
-        primary key
-         autoincrement,
-    code TEXT
+  id INTEGER
+    primary key
+  autoincrement,
+  code TEXT
 )
 ;
 
 CREATE UNIQUE INDEX IF NOT EXISTS occupancy_type_code_uindex
-    on occupancy_type (code)
+  on occupancy_type (code)
 ;
 
 CREATE TABLE IF NOT EXISTS shutter
 (
-    id INTEGER
-        primary key
-         autoincrement,
-    remark TEXT,
-    point TEXT
+  id INTEGER
+    primary key
+  autoincrement,
+  remark TEXT,
+  point TEXT
 )
 ;
 
 CREATE TABLE IF NOT EXISTS renting
 (
-    id INTEGER
-        primary key
-         autoincrement,
-    shutter_id INTEGER
-        constraint renting_shutter_id_fk
-            references shutter
+  id INTEGER
+    primary key
+  autoincrement,
+  shutter_id INTEGER
+    constraint renting_shutter_id_fk
+    references shutter
 )
 ;
 
 CREATE UNIQUE INDEX IF NOT EXISTS renting_shutter_id_uindex
-    on renting (shutter_id)
+  on renting (shutter_id)
 ;
 
 CREATE INDEX IF NOT EXISTS shutter_point_id_index
-    on shutter (point, id)
+  on shutter (point, id)
 ;
 
 CREATE UNIQUE INDEX IF NOT EXISTS shutter_point_uindex
-    on shutter (point)
+  on shutter (point)
 ;
 
 CREATE TABLE IF NOT EXISTS unlock
 (
-    shutter_id INTEGER
-        constraint unlock_shutter_id_fk
-            references shutter
+  shutter_id INTEGER
+    constraint unlock_shutter_id_fk
+    references shutter
 )
 ;
 
 CREATE UNIQUE INDEX IF NOT EXISTS unlock_shutter_id_uindex
-    on unlock (shutter_id)
+  on unlock (shutter_id)
 ;
 
-CREATE TABLE IF NOT EXISTS "user"
+CREATE TABLE IF NOT EXISTS 'user'
 (
-    id INTEGER
-        primary key
-         autoincrement,
-    email TEXT,
-    secret TEXT
+  id INTEGER
+    primary key
+  autoincrement,
+  email TEXT,
+  secret TEXT
 )
 ;
 
 CREATE TABLE IF NOT EXISTS lease
 (
-    id INTEGER
-        primary key
-         autoincrement,
-    user_id INTEGER
-        constraint occupancy_user_id_fk
-            references "user",
-    shutter_id INTEGER
-        constraint occupancy_shutter_id_fk
-            references shutter,
-    start INTEGER,
-    finish INTEGER,
-    occupancy_type_id INTEGER
-        constraint occupancy_occupancy_type_id_fk
-            references occupancy_type
+  id INTEGER
+    primary key
+  autoincrement,
+  user_id INTEGER
+    constraint occupancy_user_id_fk
+    references 'user',
+  shutter_id INTEGER
+    constraint occupancy_shutter_id_fk
+    references shutter,
+  start INTEGER,
+  finish INTEGER,
+  occupancy_type_id INTEGER
+    constraint occupancy_occupancy_type_id_fk
+    references occupancy_type
 )
 ;
 
 CREATE INDEX IF NOT EXISTS occupancy_user_id_start_finish_shutter_id_index
-    on lease (user_id, start, finish, shutter_id)
+  on lease (user_id, start, finish, shutter_id)
 ;
 
 CREATE TABLE IF NOT EXISTS session
 (
-    id INTEGER
-        primary key
-         autoincrement,
-    token TEXT,
-    finish INTEGER,
-    user_id INTEGER
-        constraint session_user_id_fk
-            references "user"
+  id INTEGER
+    primary key
+  autoincrement,
+  token TEXT,
+  finish INTEGER,
+  user_id INTEGER
+    constraint session_user_id_fk
+    references 'user'
 )
 ;
 
 CREATE INDEX IF NOT EXISTS session_finish_token_user_id_index
-    on session (finish, token, user_id)
+  on session (finish, token, user_id)
 ;
 
 CREATE INDEX IF NOT EXISTS user_email_secret_index
-    on "user" (email, secret)
+  on 'user' (email, secret)
 ;
 
 CREATE UNIQUE INDEX IF NOT EXISTS user_email_uindex
-    on "user" (email)
+  on 'user' (email)
 ;
-'.'
-INSERT INTO occupancy_type (code) VALUES (\'BUSY\');
-INSERT INTO occupancy_type (code) VALUES (\'OCCUPIED\');
-INSERT INTO shutter (point) VALUES (\'1.1.1.1\');
-INSERT INTO shutter (point) VALUES (\'street-red-building-33\');
-INSERT INTO shutter (point) VALUES (\'some-where\');
+
+INSERT INTO occupancy_type (code) VALUES ('BUSY');
+INSERT INTO occupancy_type (code) VALUES ('OCCUPIED');
+INSERT INTO shutter (point) VALUES ('1.1.1.1');
+INSERT INTO shutter (point) VALUES ('street-red-building-33');
+INSERT INTO shutter (point) VALUES ('some-where');
 INSERT INTO renting (shutter_id) SELECT id FROM shutter LIMIT 1;
-INSERT INTO renting (shutter_id) SELECT id FROM shutter OFFSET 2 LIMIT 1;
-    ';
+INSERT INTO renting (shutter_id) SELECT id FROM shutter  LIMIT 1 OFFSET 2
+;
+    ";
     const UNMOUNT = '
 DELETE FROM renting;
 DELETE FROM lease;
@@ -205,9 +206,14 @@ VACUUM;
 
         $isSuccess = $db->exec($requestText) !== false;
 
+        $isDelete = $this->getRequest()->isDelete();
+        $isPost = $this->getRequest()->isPost();
         $response = $this->getResponse();
-        if ($isSuccess) {
-            $response = $response->withStatus(200);
+        if ($isSuccess && $isPost) {
+            $response = $response->withStatus(201);
+        }
+        if ($isSuccess && $isDelete) {
+            $response = $response->withStatus(204);
         }
         if (!$isSuccess) {
             $response = $response->withStatus(500);

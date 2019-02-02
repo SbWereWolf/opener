@@ -46,8 +46,15 @@ class UserHandler extends DataHandler
             $isValid = password_verify($password, $secret);
 
             if ($isValid) {
-                session_start();
+                @session_start();
                 $token = session_id();
+
+                $isEmpty = empty($token);
+                if ($isEmpty) {
+                    $token = session_create_id();
+                    @session_id($token);
+                }
+
                 session_write_close();
                 $email = $user->getEmail();
 
