@@ -33,6 +33,12 @@ class Reception extends \Environment\Basis\Reception
         return $value;
     }
 
+    private function getUserId(): int
+    {
+        $value = $this->getParser()->getIntegerField(self::USER_ID);
+        return $value;
+    }
+
     private  function getShutterId(): int
     {
         $value = $this->getParser()->getIntegerField(self::SHUTTER_ID);
@@ -110,6 +116,7 @@ class Reception extends \Environment\Basis\Reception
     private function setupLease(): ILease
     {
         $id = $this->getId();
+        $userId = $this->getUserId();
         $shutterId = $this->getShutterId();
         $start = $this->getStart();
         $finish = $this->getFinish();
@@ -118,6 +125,7 @@ class Reception extends \Environment\Basis\Reception
 
         $lease = (new Lease())
             ->setId($id)
+            ->setUserId($userId)
             ->setShutterId($shutterId)
             ->setStart($start)
             ->setFinish($finish)
