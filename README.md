@@ -117,10 +117,12 @@ Body:
 Response :
 Code : 201
 Body :
+Response body
+Download
 [
   {
     "finish": 0,
-    "token": "2y10GHIjbsKUiRU94RVwGhHheE8hWmAz46DlSdmWbfU6lQWSOnJ0UPC"
+    "token": "laraseb28j489f2jrhslodmtu8"
   }
 ]
 ```
@@ -130,7 +132,7 @@ Request :
 POST "http://local.opener/lease/"
 Body :
 {
-  "token": "2y10GHIjbsKUiRU94RVwGhHheE8hWmAz46DlSdmWbfU6lQWSOnJ0UPC",
+  "token": "laraseb28j489f2jrhslodmtu8",
   "user-id": 0,
   "shutter-id": 1,
   "start": 0,
@@ -140,20 +142,23 @@ Body :
 
 Response :
 Code : 201
+Body :
+[]
 ```
 ## View available lease
 ```
 Request :
-GET "http://local.opener/lease/current/2y10GHIjbsKUiRU94RVwGhHheE8hWmAz46DlSdmWbfU6lQWSOnJ0UPC/"
+GET "http://local.opener/lease/current/laraseb28j489f2jrhslodmtu8/"
 
 Response :
 Code : 200
 Body :
 [
   {
-    "finish": 1547842735,
-    "shutter-id": 1,
-    "start": 1547840935
+    "shutter-id": 0,
+    "lease-id": 6,
+    "start": 1549120412,
+    "finish": 1549122212
   }
 ]
 ```
@@ -163,7 +168,8 @@ Request :
 POST "http://local.opener/unlock/"
 Body :
 {
-  "shutter-id": 1
+  "token": "laraseb28j489f2jrhslodmtu8",
+  "lease-id": 6
 }
 
 Response :
@@ -173,7 +179,7 @@ Code : 201
 
 ```
 Request :
-GET "http://local.opener/unlock/localhost/"
+GET "http://local.opener/unlock/tam-tam-gde-gde/"
 
 Response :
 Code : 200
@@ -181,7 +187,7 @@ Code : 200
 ## Report successful opening of the latch
 ```
 Request :
-DELETE "http://local.opener/unlock/localhost/"
+DELETE "http://local.opener/unlock/tam-tam-gde-gde/"
 
 Response :
 Code : 204
@@ -189,7 +195,7 @@ Code : 204
 ## Logout of Opener service
 ```
 Request :
-DELETE "http://local.opener/session/2y10GHIjbsKUiRU94RVwGhHheE8hWmAz46DlSdmWbfU6lQWSOnJ0UPC/"
+DELETE "http://local.opener/session/laraseb28j489f2jrhslodmtu8/"
 
 Response :
 Code : 204
