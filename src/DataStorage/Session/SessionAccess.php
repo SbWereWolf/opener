@@ -4,7 +4,7 @@ namespace DataStorage\Session;
 
 
 use BusinessLogic\Basis\Content;
-use BusinessLogic\Session;
+use BusinessLogic\Session\Session;
 use BusinessLogic\Session\ISession;
 use BusinessLogic\Session\SessionSet;
 use DataStorage\Basis\DataAccess;
@@ -79,7 +79,7 @@ VALUES(
         return $this;
     }
 
-    public function select(Session\ISession $session): self
+    public function select(ISession $session): self
     {
         $requestText = '
 SELECT 
