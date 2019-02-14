@@ -10,6 +10,7 @@ use Slim\Http\Response;
 
 class WholeFunctionalTest extends \PHPUnit\Framework\TestCase
 {
+    private $shutterPoint = '1.1.1.1';
     public function testDismountStorage()
     {
         $body = (new \Slim\Http\RequestBody());
@@ -122,7 +123,7 @@ class WholeFunctionalTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(201, $resOut->getStatusCode());
     }
 
-    public function testSessionWorking()
+    public function testOpenSession(): array
     {
         //test log in
         $body = (new \Slim\Http\RequestBody());
@@ -146,6 +147,15 @@ class WholeFunctionalTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue(!empty($token));
         $this->assertEquals(201, $resOut->getStatusCode());
 
+        return array('token' => $token);
+    }
+
+    /**
+     * @depends testOpenSession
+     */
+    public function testBrowseShutterWithToken(array $previous): array
+    {
+        $token = $previous['token'];
         //test browse shutter with token
         $body = (new \Slim\Http\RequestBody());
 
@@ -157,11 +167,13 @@ class WholeFunctionalTest extends \PHPUnit\Framework\TestCase
 
         $resOut = $this->RunWebCall($request);
 
-        $this->assertEquals(json_encode(array([
-                'shutter-id' => 1,
-                'lease-id' => 0,
-                'start' => 0,
-                'finish' => 0],
+        $firstRow = [
+            'shutter-id' => 1,
+            'lease-id' => 0,
+            'start' => 0,
+            'finish' => 0];
+
+        $this->assertEquals(json_encode(array($firstRow,
                 ['shutter-id' => 2,
                     'lease-id' => 0,
                     'start' => 0,
@@ -170,14 +182,24 @@ class WholeFunctionalTest extends \PHPUnit\Framework\TestCase
         ), $resOut->getBody()->getContents());
         $this->assertEquals(200, $resOut->getStatusCode());
 
-        //test take a lease
+        return array('token' => $token,
+            'shutter' => $firstRow);
+    }
+
+    /**
+     * @depends testBrowseShutterWithToken
+     */
+    public function testTakeALease(array $previous)
+    {
+        $token = $previous['token'];
+        $dataSet = $previous['shutter'];
         $body = (new \Slim\Http\RequestBody());
         $body->write(json_encode([
             'token' => $token,
             'user-id' => 0,
-            'shutter-id' => 1,
-            'start' => 0,
-            'finish' => 0,
+            'shutter-id' => $dataSet['shutter-id'],
+            'start' => $dataSet['start'],
+            'finish' => $dataSet['finish'],
             'occupancy-type-id' => 0,
         ]));
 
@@ -192,6 +214,15 @@ class WholeFunctionalTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(json_encode(array()), $resOut->getBody()->getContents());
         $this->assertEquals(201, $resOut->getStatusCode());
 
+        return array('token' => $token,);
+    }
+
+    /**
+     * @depends testOpenSession
+     */
+    public function testBrowseOwnLease(array $previous): array
+    {
+        $token = $previous['token'];
         //test browse own lease
         $body = (new \Slim\Http\RequestBody());
 
@@ -212,11 +243,22 @@ class WholeFunctionalTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($output['finish'] > $output['start']);
         $this->assertEquals(200, $resOut->getStatusCode());
 
+        return array('token' => $token,
+            'lease' => $output['lease-id']);
+    }
+
+    /**
+     * @depends testBrowseOwnLease
+     */
+    public function testRequestUnlocking(array $previous)
+    {
+        $token = $previous['token'];
+        $leaseId = $previous['lease'];
         //test request unlocking
         $body = (new \Slim\Http\RequestBody());
         $body->write(json_encode([
             'token' => $token,
-            'lease-id' => 1,
+            'lease-id' => $leaseId,
         ]));
 
         $link = 'http://local.opener/unlock/';
@@ -229,11 +271,14 @@ class WholeFunctionalTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals(null, $resOut->getBody()->getContents());
         $this->assertEquals(201, $resOut->getStatusCode());
+    }
 
+    public function testGetUnlockingTask()
+    {
         //test get unlocking task
         $body = (new \Slim\Http\RequestBody());
 
-        $link = 'http://local.opener/unlock/1.1.1.1/';
+        $link = "http://local.opener/unlock/$this->shutterPoint/";
         $request = $this->setupRequest($body, $link);
 
         $request = $request->withHeader('Content-Type', 'application/json');
@@ -244,11 +289,14 @@ class WholeFunctionalTest extends \PHPUnit\Framework\TestCase
         //Assert
         $this->assertEquals(null, $resOut->getBody()->getContents());
         $this->assertEquals(200, $resOut->getStatusCode());
+    }
 
+    public function testReportCompleteUnlockingTask()
+    {
         //test report complete unlocking task
         $body = (new \Slim\Http\RequestBody());
 
-        $link = 'http://local.opener/unlock/1.1.1.1/';
+        $link = "http://local.opener/unlock/$this->shutterPoint/";
         $request = $this->setupRequest($body, $link);
 
         $request = $request->withHeader('Content-Type', 'application/json');
@@ -259,8 +307,15 @@ class WholeFunctionalTest extends \PHPUnit\Framework\TestCase
         //Assert
         $this->assertEquals(null, $resOut->getBody()->getContents());
         $this->assertEquals(204, $resOut->getStatusCode());
+    }
 
-        //test report complete unlocking task
+    /**
+     * @depends testOpenSession
+     */
+    public function testCloseSession(array $previous)
+    {
+        $token = $previous['token'];
+        //test close session
         $body = (new \Slim\Http\RequestBody());
 
         $link = 'http://local.opener/session/' . $token . '/';
@@ -276,12 +331,16 @@ class WholeFunctionalTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(204, $resOut->getStatusCode());
     }
 
-    public function testUpdateLease()
+    /**
+     * @depends testBrowseOwnLease
+     */
+    public function testUpdateLease(array $previous)
     {
+        $leaseId = $previous['lease'];
         //write request data
         $body = (new \Slim\Http\RequestBody());
         $body->write(json_encode([
-            'id' => 1,
+            'id' => $leaseId,
             'user-id' => 1,
             'shutter-id' => 1,
             'start' => 1,

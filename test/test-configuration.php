@@ -6,13 +6,13 @@
  */
 
 if (!defined('APPLICATION_ROOT')) {
-    define('APPLICATION_ROOT', realpath(__DIR__) . DIRECTORY_SEPARATOR . '..');
+    define('APPLICATION_ROOT', realpath(__DIR__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR);
 }
-require_once(APPLICATION_ROOT . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php');
+require_once(APPLICATION_ROOT . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php');
 
 if (!defined('CONFIGURATION_ROOT')) {
-    define('CONFIGURATION_ROOT', APPLICATION_ROOT . DIRECTORY_SEPARATOR . 'configuration');
+    define('CONFIGURATION_ROOT', APPLICATION_ROOT . 'configuration' . DIRECTORY_SEPARATOR);
 }
 if (!defined('DATA_PATH')) {
-    define('DATA_PATH', CONFIGURATION_ROOT . DIRECTORY_SEPARATOR . 'test-latch.sqlite');
+    define('DATA_PATH', CONFIGURATION_ROOT . 'test-latch.sqlite');
 }
