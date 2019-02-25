@@ -20,6 +20,7 @@ class Router extends \Environment\Basis\Router
     public function settingUpRoutes(): Routing
     {
         $app = $this->getHandler();
+        $dataSource = $this->getDataSource();
         $root = $this->root;
         $point = $this->point;
         /**
@@ -40,9 +41,10 @@ class Router extends \Environment\Basis\Router
          *     ),
          * )
          */
-        $app->post($root, function (Request $request, Response $response, array $arguments) {
+        $app->post($root, function (Request $request, Response $response, array $arguments)
+        use ($dataSource) {
 
-            $response = (new Controller($request, $response, $arguments, DATA_PATH))
+            $response = (new Controller($request, $response, $arguments, $dataSource))
                 ->process();
 
             return $response;
@@ -69,9 +71,10 @@ class Router extends \Environment\Basis\Router
          *     ),
          * )
          */
-        $app->get("$root$point", function (Request $request, Response $response, array $arguments) {
+        $app->get("$root$point", function (Request $request, Response $response, array $arguments)
+        use ($dataSource) {
 
-            $response = (new Controller($request, $response, $arguments, DATA_PATH))
+            $response = (new Controller($request, $response, $arguments, $dataSource))
                 ->process();
 
             return $response;
@@ -94,9 +97,10 @@ class Router extends \Environment\Basis\Router
          *     ),
          * )
          */
-        $app->delete("$root$point", function (Request $request, Response $response, array $arguments) {
+        $app->delete("$root$point", function (Request $request, Response $response, array $arguments)
+        use ($dataSource) {
 
-            $response = (new Controller($request, $response, $arguments, DATA_PATH))
+            $response = (new Controller($request, $response, $arguments, $dataSource))
                 ->process();
 
             return $response;

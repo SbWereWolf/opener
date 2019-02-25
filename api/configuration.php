@@ -19,10 +19,19 @@ if (!defined('CONFIGURATION_ROOT')) {
 if (!defined('DATA_PATH')) {
     define('DATA_PATH', CONFIGURATION_ROOT . 'latch.sqlite');
 }
+if (!defined('DATA_SOURCE')) {
+    define('DATA_SOURCE', CONFIGURATION_ROOT . 'setup-datasource.php');
+}
+if (!defined('DATA_SOURCE_KEY')) {
+    define('DATA_SOURCE_KEY', 'dataSource');
+}
+$dataSource = require(DATA_SOURCE);
 
 // Create and configure Slim app
 $configuration['displayErrorDetails'] = true;
 $configuration['addContentLengthHeader'] = false;
+$configuration[DATA_SOURCE_KEY] = $dataSource;
+unset($dataSource);
 $container = new Container(['settings' => $configuration]);
 
 $app = null;

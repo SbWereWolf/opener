@@ -9,14 +9,15 @@ namespace BusinessLogic\User;
 
 
 use BusinessLogic\Basis\Content;
+use DataStorage\Basis\DataSource;
 use DataStorage\User\UserHandler;
 
 class UserManager
 {
     private $user = null;
-    private $dataPath = '';
+    private $dataPath = null;
 
-    public function __construct(IUser $user, string $dataPath)
+    public function __construct(IUser $user, DataSource $dataPath)
     {
         $this->setDataPath($dataPath)
             ->setUser($user);
@@ -61,7 +62,7 @@ class UserManager
     /**
      * @return string
      */
-    public function getDataPath(): string
+    public function getDataPath(): DataSource
     {
         return $this->dataPath;
     }
@@ -70,7 +71,7 @@ class UserManager
      * @param string $dataPath
      * @return self
      */
-    public function setDataPath(string $dataPath): self
+    public function setDataPath(DataSource $dataPath): self
     {
         $this->dataPath = $dataPath;
         return $this;

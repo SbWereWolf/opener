@@ -20,6 +20,7 @@ class Router extends \Environment\Basis\Router
     public function settingUpRoutes(): Routing
     {
         $app = $this->getHandler();
+        $dataSource = $this->getDataSource();
         $root = $this->root;
         $token = $this->token;
         /**
@@ -58,8 +59,9 @@ class Router extends \Environment\Basis\Router
          *    ),
          * )
          */
-        $app->get($root . "actual/[$token]", function (Request $request, Response $response, array $arguments) {
-            $response = (new Controller($request, $response, $arguments, DATA_PATH))
+        $app->get($root . "actual/[$token]", function (Request $request, Response $response, array $arguments)
+        use ($dataSource) {
+            $response = (new Controller($request, $response, $arguments, $dataSource))
                 ->letRetrieveActual()
                 ->process();
 
@@ -83,9 +85,10 @@ class Router extends \Environment\Basis\Router
          *    ),
          * )
          */
-        $app->post($root, function (Request $request, Response $response, array $arguments) {
+        $app->post($root, function (Request $request, Response $response, array $arguments)
+        use ($dataSource) {
 
-            $response = (new Controller($request, $response, $arguments, DATA_PATH))
+            $response = (new Controller($request, $response, $arguments, $dataSource))
                 ->process();
 
             return $response;
@@ -112,8 +115,9 @@ class Router extends \Environment\Basis\Router
          *     ),
          * )
          */
-        $app->get($root . "current/$token", function (Request $request, Response $response, array $arguments) {
-            $response = (new Controller($request, $response, $arguments, DATA_PATH))
+        $app->get($root . "current/$token", function (Request $request, Response $response, array $arguments)
+        use ($dataSource) {
+            $response = (new Controller($request, $response, $arguments, $dataSource))
                 ->letRetrieveCurrent()
                 ->process();
 
@@ -137,9 +141,10 @@ class Router extends \Environment\Basis\Router
          *     ),
          * )
          */
-        $app->put($root, function (Request $request, Response $response, array $arguments) {
+        $app->put($root, function (Request $request, Response $response, array $arguments)
+        use ($dataSource) {
 
-            $response = (new Controller($request, $response, $arguments, DATA_PATH))
+            $response = (new Controller($request, $response, $arguments, $dataSource))
                 ->process();
 
             return $response;

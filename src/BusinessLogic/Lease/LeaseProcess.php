@@ -10,6 +10,7 @@ namespace BusinessLogic\Lease;
 
 use BusinessLogic\Basis\Content;
 use BusinessLogic\Session\SessionHelper;
+use DataStorage\Basis\DataSource;
 
 class LeaseProcess
 {
@@ -25,7 +26,7 @@ class LeaseProcess
      * @param string $token
      * @return Content
      */
-    public function addNewLease(string $dataPath, string $token): Content
+    public function addNewLease(DataSource $dataPath, string $token): Content
     {
         $isSuccess = (new SessionHelper($dataPath))->prolong($token);
 
@@ -58,7 +59,7 @@ class LeaseProcess
      * @param string $dataPath
      * @return Content
      */
-    public function overwriteLease(string $dataPath): Content
+    public function overwriteLease(DataSource $dataPath): Content
     {
         $leaseSet = (new LeaseManager($this->getLease(), $dataPath))->update();
         return $leaseSet;
@@ -69,7 +70,7 @@ class LeaseProcess
      * @param string $token
      * @return Content
      */
-    public function retrieveCurrent(string $dataPath, string $token): Content
+    public function retrieveCurrent(DataSource $dataPath, string $token): Content
     {
         $isSuccess = (new SessionHelper($dataPath))->prolong($token);
 
@@ -85,7 +86,7 @@ class LeaseProcess
      * @param string $token
      * @return Content
      */
-    public function retrieveActual(string $dataPath, string $token): Content
+    public function retrieveActual(DataSource $dataPath, string $token): Content
     {
         $isSuccess = (new SessionHelper($dataPath))->prolong($token);
 

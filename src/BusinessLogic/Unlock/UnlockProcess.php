@@ -11,6 +11,7 @@ namespace BusinessLogic\Unlock;
 use BusinessLogic\Basis\Content;
 use BusinessLogic\Basis\DataSet;
 use BusinessLogic\Session\SessionHelper;
+use DataStorage\Basis\DataSource;
 
 class UnlockProcess
 {
@@ -26,7 +27,7 @@ class UnlockProcess
      * @param string $token
      * @return Content
      */
-    public function scheduleUnlock(string $dataPath, string $token): Content
+    public function scheduleUnlock(DataSource $dataPath, string $token): Content
     {
         $isSuccess = (new SessionHelper($dataPath))->prolong($token);
 
@@ -49,7 +50,7 @@ class UnlockProcess
         return $this;
     }
 
-    public function confirmUnlock(string $dataPath): Content
+    public function confirmUnlock(DataSource $dataPath): Content
     {
         $result = (new UnlockManager($this->getUnlock(), $dataPath))->confirmUnlock();
 
@@ -57,7 +58,7 @@ class UnlockProcess
     }
 
 
-    public function checkPoint(string $dataPath): Content
+    public function checkPoint(DataSource $dataPath): Content
     {
         $result = (new UnlockManager($this->getUnlock(), $dataPath))->checkPoint();
 

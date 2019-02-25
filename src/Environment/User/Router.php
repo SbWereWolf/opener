@@ -19,6 +19,7 @@ class Router extends \Environment\Basis\Router
     public function settingUpRoutes(): Routing
     {
         $app = $this->getHandler();
+        $dataSource = $this->getDataSource();
         $root = $this->root;
         $login = Controller::LOG_IN;
         /**
@@ -43,9 +44,10 @@ class Router extends \Environment\Basis\Router
          *     ),
          * )
          */
-        $app->post($root, function (Request $request, Response $response, array $arguments) {
+        $app->post($root, function (Request $request, Response $response, array $arguments)
+        use ($dataSource) {
 
-            $response = (new Controller($request, $response, $arguments, DATA_PATH))
+            $response = (new Controller($request, $response, $arguments, $dataSource))
                 ->process();
 
             return $response;
@@ -72,9 +74,10 @@ class Router extends \Environment\Basis\Router
          *     ),
          * )
          */
-        $app->post("$root$login", function (Request $request, Response $response, array $arguments) {
+        $app->post("$root$login", function (Request $request, Response $response, array $arguments)
+        use ($dataSource) {
 
-            $response = (new Controller($request, $response, $arguments, DATA_PATH))
+            $response = (new Controller($request, $response, $arguments, $dataSource))
                 ->process();
 
             return $response;

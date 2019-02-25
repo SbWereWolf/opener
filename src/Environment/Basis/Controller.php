@@ -4,6 +4,7 @@ namespace Environment\Basis;
 
 
 use BusinessLogic\Session\SessionHelper;
+use DataStorage\Basis\DataSource;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -17,9 +18,9 @@ class Controller implements IController
     private $request = null;
     private $response = null;
     private $arguments = array();
-    private $dataPath = '';
+    private $dataPath = null;
 
-    function __construct(Request $request, Response $response, array $parametersInPath, string $dataPath)
+    function __construct(Request $request, Response $response, array $parametersInPath, DataSource $dataPath)
     {
         $this->setArguments($parametersInPath)
             ->setDataPath($dataPath)
@@ -84,7 +85,7 @@ class Controller implements IController
      * @param string $dataPath
      * @return Controller
      */
-    protected function setDataPath(string $dataPath): Controller
+    protected function setDataPath(DataSource $dataPath): Controller
     {
         $this->dataPath = $dataPath;
         return $this;
@@ -93,7 +94,7 @@ class Controller implements IController
     /**
      * @return string
      */
-    protected function getDataPath(): string
+    protected function getDataPath(): DataSource
     {
         return $this->dataPath;
     }

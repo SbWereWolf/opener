@@ -8,11 +8,13 @@
 namespace BusinessLogic\Session;
 
 
+use DataStorage\Basis\DataSource;
+
 class SessionHelper
 {
     private $dataPath = '';
 
-    public function __construct(string $dataPath)
+    public function __construct(DataSource $dataPath)
     {
         $this->setDataPath($dataPath);
     }
@@ -33,12 +35,12 @@ class SessionHelper
     /**
      * @return string
      */
-    public function getDataPath(): string
+    public function getDataPath(): DataSource
     {
         return $this->dataPath;
     }
 
-    public function setDataPath(string $dataPath): self
+    public function setDataPath(DataSource $dataPath): self
     {
         $this->dataPath = $dataPath;
         return $this;

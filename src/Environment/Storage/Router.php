@@ -19,6 +19,7 @@ class Router extends \Environment\Basis\Router
     public function settingUpRoutes(): Routing
     {
         $app = $this->getHandler();
+        $dataSource = $this->getDataSource();
         $root = $this->root;
         /**
          * @SWG\Post(
@@ -31,8 +32,9 @@ class Router extends \Environment\Basis\Router
          *     )
          * )
          */
-        $app->post("$root/install/", function (Request $request, Response $response, array $arguments) {
-            $response = (new Controller($request, $response, $arguments, DATA_PATH))
+        $app->post("$root/install/", function (Request $request, Response $response, array $arguments)
+        use ($dataSource) {
+            $response = (new Controller($request, $response, $arguments, $dataSource))
                 ->process();
 
             return $response;
@@ -48,8 +50,9 @@ class Router extends \Environment\Basis\Router
          *     )
          * )
          */
-        $app->delete("$root/dismount/", function (Request $request, Response $response, array $arguments) {
-            $response = (new Controller($request, $response, $arguments, DATA_PATH))
+        $app->delete("$root/dismount/", function (Request $request, Response $response, array $arguments)
+        use ($dataSource) {
+            $response = (new Controller($request, $response, $arguments, $dataSource))
                 ->process();
 
             return $response;

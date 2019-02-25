@@ -9,14 +9,15 @@ namespace BusinessLogic\Lease;
 
 
 use BusinessLogic\Basis\Content;
+use DataStorage\Basis\DataSource;
 use DataStorage\Lease\LeaseHandler;
 
 class LeaseManager
 {
     private $lease = null;
-    private $dataPath = '';
+    private $dataPath = null;
 
-    public function __construct(ILease $lease, string $dataPath)
+    public function __construct(ILease $lease, DataSource $dataPath)
     {
         $this->setDataPath($dataPath)
             ->setLease($lease);
@@ -42,7 +43,7 @@ class LeaseManager
      * @param string $dataPath
      * @return LeaseManager
      */
-    public function setDataPath(string $dataPath): self
+    public function setDataPath(DataSource $dataPath): self
     {
         $this->dataPath = $dataPath;
         return $this;
@@ -51,7 +52,7 @@ class LeaseManager
     /**
      * @return string
      */
-    public function getDataPath(): string
+    public function getDataPath(): DataSource
     {
         return $this->dataPath;
     }

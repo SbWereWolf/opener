@@ -201,8 +201,12 @@ VACUUM;
      */
     private function executeCommand($requestText)
     {
-        $dataPath = $this->getDataPath();
-        $db = (new \PDO("sqlite:$dataPath"));
+        $dataSource = $this->getDataPath();
+        $db = new \PDO(
+            $dataSource->getDsn(),
+            $dataSource->getUsername(),
+            $dataSource->getPasswd(),
+            $dataSource->getOptions());
 
         $isSuccess = $db->exec($requestText) !== false;
 

@@ -11,11 +11,29 @@ namespace DataStorage\Basis;
 class DataHandler
 {
     protected $access = null;
-    private $dsn = '';
+    private $dataSource = null;
 
-    public function __construct(string $dataPath)
+    public function __construct(DataSource $dataPath)
     {
-        $this->dsn = "sqlite:$dataPath";
+        $this->setDataSource($dataPath);
+    }
+
+    /**
+     * @param DataSource $dataSource
+     * @return DataHandler
+     */
+    private function setDataSource(DataSource $dataSource): DataHandler
+    {
+        $this->dataSource = $dataSource;
+        return $this;
+    }
+
+    /**
+     * @return DataSource
+     */
+    private function getDataSource(): DataSource
+    {
+        return $this->dataSource;
     }
 
     protected function begin(): bool
@@ -31,7 +49,12 @@ class DataHandler
         $isExists = !empty($access);
 
         if (!$isExists) {
-            $access = new \PDO($this->dsn);
+            $dataSource = $this->getDataSource();
+            $access = new \PDO(
+                $dataSource->getDsn(),
+                $dataSource->getUsername(),
+                $dataSource->getPasswd(),
+                $dataSource->getOptions());
             $this->access = $access;
         }
 

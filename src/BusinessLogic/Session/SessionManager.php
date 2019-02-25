@@ -9,14 +9,15 @@ namespace BusinessLogic\Session;
 
 
 use BusinessLogic\Basis\Content;
+use DataStorage\Basis\DataSource;
 use DataStorage\Session\SessionHandler;
 
 class SessionManager
 {
     private $session = null;
-    private $dataPath = '';
+    private $dataPath = null;
 
-    public function __construct(ISession $session, string $dataPath)
+    public function __construct(ISession $session, DataSource $dataPath)
     {
         $this->setDataPath($dataPath)
             ->setSession($session);
@@ -61,12 +62,12 @@ class SessionManager
     /**
      * @return string
      */
-    public function getDataPath(): string
+    public function getDataPath(): DataSource
     {
         return $this->dataPath;
     }
 
-    public function setDataPath(string $dataPath): self
+    public function setDataPath(DataSource $dataPath): self
     {
         $this->dataPath = $dataPath;
         return $this;

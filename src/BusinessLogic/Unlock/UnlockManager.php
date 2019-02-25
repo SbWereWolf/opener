@@ -9,14 +9,15 @@ namespace BusinessLogic\Unlock;
 
 
 use BusinessLogic\Basis\Content;
+use DataStorage\Basis\DataSource;
 use DataStorage\Unlock\UnlockHandler;
 
 class UnlockManager
 {
     private $unlock = null;
-    private $dataPath = '';
+    private $dataPath = null;
 
-    public function __construct(IUnlock $unlock, string $dataPath)
+    public function __construct(IUnlock $unlock, DataSource $dataPath)
     {
         $this->setDataPath($dataPath)
             ->setUnlock($unlock);
@@ -50,7 +51,7 @@ class UnlockManager
     /**
      * @return string
      */
-    public function getDataPath(): string
+    public function getDataPath(): DataSource
     {
         return $this->dataPath;
     }
@@ -59,7 +60,7 @@ class UnlockManager
      * @param string $dataPath
      * @return UnlockManager
      */
-    public function setDataPath(string $dataPath): self
+    public function setDataPath(DataSource $dataPath): self
     {
         $this->dataPath = $dataPath;
         return $this;

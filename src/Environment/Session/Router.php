@@ -20,6 +20,7 @@ class Router extends \Environment\Basis\Router
     public function settingUpRoutes(): Routing
     {
         $app = $this->getHandler();
+        $dataSource = $this->getDataSource();
         $root = $this->root;
         $token = $this->token;
         /**
@@ -40,9 +41,10 @@ class Router extends \Environment\Basis\Router
          *     ),
          * )
          */
-        $app->delete("$root$token", function (Request $request, Response $response, array $arguments) {
+        $app->delete("$root$token", function (Request $request, Response $response, array $arguments)
+        use ($dataSource) {
 
-            $response = (new Controller($request, $response, $arguments, DATA_PATH))
+            $response = (new Controller($request, $response, $arguments, $dataSource))
                 ->process();
 
             return $response;
