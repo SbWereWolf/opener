@@ -14,7 +14,7 @@ use BusinessLogic\Lease\ILease;
 use BusinessLogic\Lease\Lease;
 use BusinessLogic\Unlock\IUnlock;
 use DataStorage\Basis\DataHandler;
-use DataStorage\Lease\LeaseAccess;
+use DataStorage\Lease\LeaseAccessSqlight;
 
 class UnlockHandler extends DataHandler
 {
@@ -54,14 +54,14 @@ class UnlockHandler extends DataHandler
         return $unlockAccess;
     }
 
-    private function getLeaseAccess(): LeaseAccess
+    private function getLeaseAccess(): LeaseAccessSqlight
     {
         $leaseAccess = $this->leaseAccess;
         $isExists = !empty($leaseAccess);
 
         if (!$isExists) {
             $access = $this->getAccess();
-            $leaseAccess = new LeaseAccess($access);
+            $leaseAccess = new LeaseAccessSqlight($access);
             $this->leaseAccess = $leaseAccess;
         }
 

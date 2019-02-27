@@ -22,7 +22,7 @@ class DataHandler
      * @param DataSource $dataSource
      * @return DataHandler
      */
-    private function setDataSource(DataSource $dataSource): DataHandler
+    private function setDataSource(DataSource $dataSource): self
     {
         $this->dataSource = $dataSource;
         return $this;

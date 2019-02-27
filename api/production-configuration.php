@@ -16,14 +16,17 @@ require_once(APPLICATION_ROOT . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php')
 if (!defined('CONFIGURATION_ROOT')) {
     define('CONFIGURATION_ROOT', APPLICATION_ROOT . 'configuration' . DIRECTORY_SEPARATOR);
 }
-if (!defined('DATA_PATH')) {
-    define('DATA_PATH', CONFIGURATION_ROOT . 'latch.sqlite');
-}
 if (!defined('DATA_SOURCE')) {
-    define('DATA_SOURCE', CONFIGURATION_ROOT . 'setup-datasource.php');
+    define('DATA_SOURCE', CONFIGURATION_ROOT . 'production-datasource.php');
 }
 if (!defined('DATA_SOURCE_KEY')) {
     define('DATA_SOURCE_KEY', 'dataSource');
+}
+If (!defined('SQLITE')) {
+    define('SQLITE', 'sqlite:');
+}
+If (!defined('MYSQL')) {
+    define('MYSQL', 'mysql:');
 }
 $dataSource = require(DATA_SOURCE);
 

@@ -6,7 +6,7 @@ namespace DataStorage\Basis;
 use BusinessLogic\Basis\Content;
 use BusinessLogic\Basis\DataSet;
 
-class DataAccess
+class DataAccess implements IDataAccess
 {
     private $access = null;
     private $status = false;

@@ -6,7 +6,7 @@
  */
 
 try {
-    (require('configuration.php'))->run();
+    (require('production-configuration.php'))->run();
 } catch (Exception $e) {
     echo $e->getMessage();
 }

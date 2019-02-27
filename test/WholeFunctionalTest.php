@@ -50,8 +50,8 @@ class WholeFunctionalTest extends \PHPUnit\Framework\TestCase
      */
     private function RunWebCall($request)
     {
-        require_once('test-configuration.php');
-        $app = require('../api/configuration.php');
+        require_once(APPLICATION_ROOT . 'test/test-configuration.php');
+        $app = require(APPLICATION_ROOT . 'api/production-configuration.php');
 
         $resOut = $app->process($request, new Response());
         $resOut->getBody()->rewind();

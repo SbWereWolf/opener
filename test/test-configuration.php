@@ -13,6 +13,6 @@ require_once(APPLICATION_ROOT . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php')
 if (!defined('CONFIGURATION_ROOT')) {
     define('CONFIGURATION_ROOT', APPLICATION_ROOT . 'configuration' . DIRECTORY_SEPARATOR);
 }
-if (!defined('DATA_PATH')) {
-    define('DATA_PATH', CONFIGURATION_ROOT . 'test-latch.sqlite');
+if (!defined('DATA_SOURCE')) {
+    define('DATA_SOURCE', CONFIGURATION_ROOT . 'test-datasource.php');
 }

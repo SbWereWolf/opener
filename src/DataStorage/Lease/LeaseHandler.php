@@ -25,16 +25,16 @@ class LeaseHandler extends DataHandler
     }
 
     /**
-     * @return LeaseAccess
+     * @return LeaseAccessSqlight
      */
-    private function getLeaseAccess(): LeaseAccess
+    private function getLeaseAccess(): LeaseAccessSqlight
     {
         $leaseAccess = $this->leaseAccess;
         $isExists = !empty($leaseAccess);
 
         if (!$isExists) {
             $access = $this->getAccess();
-            $leaseAccess = new LeaseAccess($access);
+            $leaseAccess = new LeaseAccessSqlight($access);
             $this->leaseAccess = $leaseAccess;
         }
 
