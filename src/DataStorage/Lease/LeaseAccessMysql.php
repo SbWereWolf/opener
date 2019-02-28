@@ -11,14 +11,14 @@ class LeaseAccessMysql extends CommonLeaseAccess implements LeaseAccess
     {
         $requestText = '
 SELECT
-    l.shutter_id as shutter_id
+       l.shutter_id as shutter_id
 FROM
      lease l
-     JOIN session s
-     on l.user_id = s.user_id
-WHERE 
+       JOIN session s
+         on l.person_id = s.person_id
+WHERE
     l.id = :ID
-    AND s.token = :TOKEN
+  AND s.token = :TOKEN
 LIMIT 1
 ;
    ';
@@ -39,29 +39,22 @@ LIMIT 1
     {
         $requestText = '
 SELECT
-    NULL AS is_free
+       ro.shutter_id AS shutter_id
+FROM
+     renting ro
 WHERE
-EXISTS
-    (
-  SELECT
-      NULL
-  FROM
-       renting
-  WHERE
-      shutter_id = :SHUTTER_ID
-    )
-  AND NOT EXISTS (
-            SELECT
-                NULL
-            FROM
-                 lease
-            WHERE
-                (:ID = 0 OR id <> :ID)
-                AND shutter_id = :SHUTTER_ID
-                AND (start < strftime("%s", "now") AND finish > strftime("%s", "now"))
-                AND (start < strftime("%s", "now")+60*30 AND finish > strftime("%s", "now")+60*30)
-    )
-LIMIT 1
+    NOT EXISTS (
+          SELECT
+              NULL
+          FROM
+               renting ri
+                 join lease li
+                   on li.shutter_id = ri.shutter_id
+          WHERE
+              ro.id = ri.id
+            AND li.start < UNIX_TIMESTAMP()
+            AND UNIX_TIMESTAMP() < li.finish
+        )
 ;
    ';
         $request = $this->prepareRequest($requestText);
@@ -94,8 +87,8 @@ WHERE
                on li.shutter_id = ri.shutter_id
           WHERE
               ro.id = ri.id
-            AND li.start < strftime("%s", "now")
-            AND strftime("%s", "now") < li.finish
+            AND li.start < UNIX_TIMESTAMP()
+            AND UNIX_TIMESTAMP() < li.finish
         )
 ;
    ';
@@ -108,22 +101,22 @@ WHERE
     public function insert(ILease $lease): LeaseAccess
     {
         $requestText = '
-INSERT INTO 
-  lease
-(   
-    user_id,
-    shutter_id,
-    start,
-    finish,
-    occupancy_type_id
-)
+INSERT INTO
+lease
+    (
+        person_id,
+        shutter_id,
+        start,
+        finish,
+        occupancy_type_id
+        )
 VALUES(
-    (select user_id from session WHERE token = :TOKEN),
-    :SHUTTER_ID,
-    strftime("%s", "now"),
-    strftime("%s", "now")+60*30,
-    (select id from occupancy_type where code = "BUSY")
-)
+          (select MAX(person_id) from session WHERE token = :TOKEN),
+          :SHUTTER_ID,
+          UNIX_TIMESTAMP(),
+          UNIX_TIMESTAMP()+60*30,
+          (select id from occupancy_type where code = "BUSY")
+          )
 ;
    ';
         $request = $this->prepareRequest($requestText);
@@ -142,17 +135,17 @@ VALUES(
     public function update(ILease $lease): LeaseAccess
     {
         $requestText = '
-UPDATE 
-  lease
-SET 
-    user_id = :USER_ID,
+UPDATE
+    lease
+SET
+    person_id = :USER_ID,
     shutter_id = :SHUTTER_ID,
     start = :START,
     finish = :FINISH,
     occupancy_type_id = :OCCUPANCY_TYPE_ID
-WHERE 
- id = :ID
- AND :START < :FINISH
+WHERE
+    id = :ID
+  AND :START < :FINISH
 ;
    ';
         $request = $this->prepareRequest($requestText);
@@ -184,22 +177,22 @@ SELECT
        lo.start AS start,
        lo.finish AS finish
 FROM
-       lease lo
+     lease lo
 WHERE
     lo.id IN (
-    SELECT
-        li.id 
-    FROM
-        session si
-        join lease li
-        on li.user_id = si.user_id
-    WHERE        
-            si.token = :TOKEN
-        AND si.finish > strftime("%s","now")
-        AND li.finish > strftime("%s","now")          
-        AND li.start < strftime("%s","now")
-    ORDER BY li.id
-    )
+             SELECT
+                    li.id
+             FROM
+                  session si
+                    join lease li
+                      on li.person_id = si.person_id
+             WHERE
+                 si.token = :TOKEN
+               AND si.finish > UNIX_TIMESTAMP()
+               AND li.finish > UNIX_TIMESTAMP()
+               AND li.start < UNIX_TIMESTAMP()
+             ORDER BY li.id
+             )
 ;
    ';
         $request = $this->prepareRequest($requestText);

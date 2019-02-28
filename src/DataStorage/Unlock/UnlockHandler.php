@@ -14,7 +14,9 @@ use BusinessLogic\Lease\ILease;
 use BusinessLogic\Lease\Lease;
 use BusinessLogic\Unlock\IUnlock;
 use DataStorage\Basis\DataHandler;
-use DataStorage\Lease\LeaseAccessSqlight;
+use DataStorage\Lease\LeaseAccess;
+use DataStorage\Lease\LeaseAccessMysql;
+use DataStorage\Lease\LeaseAccessSqlile;
 
 class UnlockHandler extends DataHandler
 {
@@ -47,21 +49,37 @@ class UnlockHandler extends DataHandler
 
         if (!$isExists) {
             $access = $this->getAccess();
-            $unlockAccess = new UnlockAccess($access);
+
+            switch (DBMS) {
+                case SQLITE:
+                    $unlockAccess = new UnlockAccessSqlite($access);
+                    break;
+                case MYSQL:
+                    $unlockAccess = new UnlockAccessMysql($access);
+                    break;
+            }
             $this->unlockAccess = $unlockAccess;
         }
 
         return $unlockAccess;
     }
 
-    private function getLeaseAccess(): LeaseAccessSqlight
+    private function getLeaseAccess(): LeaseAccess
     {
         $leaseAccess = $this->leaseAccess;
         $isExists = !empty($leaseAccess);
 
         if (!$isExists) {
             $access = $this->getAccess();
-            $leaseAccess = new LeaseAccessSqlight($access);
+
+            switch (DBMS) {
+                case SQLITE:
+                    $leaseAccess = new LeaseAccessSqlile($access);
+                    break;
+                case MYSQL:
+                    $leaseAccess = new LeaseAccessMysql($access);
+                    break;
+            }
             $this->leaseAccess = $leaseAccess;
         }
 
@@ -156,6 +174,4 @@ class UnlockHandler extends DataHandler
 
         return $isPossible;
     }
-
-
 }

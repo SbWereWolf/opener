@@ -17,7 +17,7 @@ class Controller extends \Environment\Basis\Controller
     private $install = '';
     private $unmount = '';
 
-    const INSTALL_SQLIGHT = "
+    const INSTALL_SQLITE = "
 CREATE TABLE IF NOT EXISTS occupancy_type
 (
   id INTEGER
@@ -143,7 +143,7 @@ INSERT INTO renting (shutter_id) SELECT id FROM shutter LIMIT 1;
 INSERT INTO renting (shutter_id) SELECT id FROM shutter  LIMIT 1 OFFSET 2
 ;
     ";
-    const UNMOUNT_SQLIGHT = '
+    const UNMOUNT_SQLITE = '
 DELETE FROM renting;
 DELETE FROM lease;
 DELETE FROM occupancy_type;
@@ -267,8 +267,8 @@ drop table shutter;
 
         switch (DBMS) {
             case SQLITE:
-                $this->setInstall(self::INSTALL_SQLIGHT);
-                $this->setUnmount(self::UNMOUNT_SQLIGHT);
+                $this->setInstall(self::INSTALL_SQLITE);
+                $this->setUnmount(self::UNMOUNT_SQLITE);
                 break;
             case MYSQL:
                 $this->setInstall(self::INSTALL_MYSQL);
@@ -299,7 +299,7 @@ drop table shutter;
      */
     private function create(): Response
     {
-        $response = $this->executeCommand(self::INSTALL_SQLIGHT);
+        $response = $this->executeCommand($this->install);
 
         return $response;
     }
@@ -339,7 +339,7 @@ drop table shutter;
      */
     private function delete(): Response
     {
-        $response = $this->executeCommand(self::UNMOUNT_SQLIGHT);
+        $response = $this->executeCommand($this->unmount);
 
         return $response;
     }

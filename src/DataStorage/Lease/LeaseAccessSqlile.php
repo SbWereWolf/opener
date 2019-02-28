@@ -5,7 +5,7 @@ namespace DataStorage\Lease;
 
 use BusinessLogic\Lease\ILease;
 
-class LeaseAccessSqlight extends CommonLeaseAccess implements LeaseAccess
+class LeaseAccessSqlile extends CommonLeaseAccess implements LeaseAccess
 {
     public function getShutterId(ILease $lease): LeaseAccess
     {
@@ -118,7 +118,7 @@ INSERT INTO
     occupancy_type_id
 )
 VALUES(
-    (select user_id from session WHERE token = :TOKEN),
+    (select MAX(user_id) from session WHERE token = :TOKEN),
     :SHUTTER_ID,
     strftime("%s", "now"),
     strftime("%s", "now")+60*30,

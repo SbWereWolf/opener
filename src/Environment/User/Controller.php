@@ -3,7 +3,7 @@
 namespace Environment\User;
 
 
-use BusinessLogic\User\UserManager;
+use BusinessLogic\Person\PersonManager;
 use Environment\Session;
 use Slim\Http\Response;
 
@@ -48,7 +48,7 @@ class Controller extends \Environment\Basis\Controller
     {
         $item = $reception->toCreate();
 
-        $userSet = (new UserManager($item, $this->getDataPath()))->create();
+        $userSet = (new PersonManager($item, $this->getDataPath()))->create();
 
         $response = (new Presentation($this->getRequest(), $this->getResponse(), $userSet))->process();
 
@@ -59,7 +59,7 @@ class Controller extends \Environment\Basis\Controller
     {
         $item = $reception->toCreate();
 
-        $sessionSet = (new UserManager($item, $this->getDataPath()))->logIn();
+        $sessionSet = (new PersonManager($item, $this->getDataPath()))->logIn();
 
         $response = (new Session\Presentation($this->getRequest(), $this->getResponse(), $sessionSet))
             ->process();

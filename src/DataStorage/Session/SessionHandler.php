@@ -73,7 +73,15 @@ class SessionHandler extends DataHandler
 
         if (!$isExists) {
             $access = $this->getAccess();
-            $sessionAccess = new SessionAccess($access);
+
+            switch (DBMS) {
+                case SQLITE:
+                    $sessionAccess = new SessionAccessSqlite($access);
+                    break;
+                case MYSQL:
+                    $sessionAccess = new SessionAccessMysql($access);
+                    break;
+            }
             $this->sessionAccess = $sessionAccess;
         }
 

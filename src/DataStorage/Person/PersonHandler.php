@@ -5,37 +5,39 @@
  * DateTime: 02.01.2019 21:49
  */
 
-namespace DataStorage\User;
+namespace DataStorage\Person;
 
 
+use BusinessLogic\Person\IPerson;
+use BusinessLogic\Person\Person;
 use BusinessLogic\Session\Session;
 use BusinessLogic\Session\SessionSet;
-use BusinessLogic\User\IUser;
-use BusinessLogic\User\User;
 use DataStorage\Basis\DataHandler;
 use DataStorage\Session\SessionAccess;
+use DataStorage\Session\SessionAccessMysql;
+use DataStorage\Session\SessionAccessSqlite;
 
-class UserHandler extends DataHandler
+class PersonHandler extends DataHandler
 {
-    private $userAccess = null;
+    private $personAccess = null;
     private $sessionAccess = null;
 
-    public function registerUser(IUser $user): \BusinessLogic\Basis\Content
+    public function registerPerson(IPerson $user): \BusinessLogic\Basis\Content
     {
-        $result = $this->getUserAccess()->insert($user)->getData();
+        $result = $this->getPersonAccess()->insert($user)->getData();
 
         return $result;
     }
 
-    public function startSession(IUser $user): \BusinessLogic\Basis\Content
+    public function startSession(IPerson $user): \BusinessLogic\Basis\Content
     {
         $result = new SessionSet();
 
         $this->begin();
         try {
 
-            $storedUser = new User();
-            foreach ($this->getUserAccess()->select($user)->getData()->next() as $dataElement){
+            $storedUser = new Person();
+            foreach ($this->getPersonAccess()->select($user)->getData()->next() as $dataElement) {
                 $storedUser = $dataElement;
                 break;
             }
@@ -77,18 +79,26 @@ class UserHandler extends DataHandler
         return $result;
     }
 
-    private function getUserAccess(): UserAccess
+    private function getPersonAccess(): PersonAccess
     {
-        $userAccess = $this->userAccess;
-        $isExists = !empty($userAccess);
+        $personAccess = $this->personAccess;
+        $isExists = !empty($personAccess);
 
         if (!$isExists) {
             $access = $this->getAccess();
-            $userAccess = new UserAccess($access);
-            $this->userAccess = $userAccess;
+
+            switch (DBMS) {
+                case SQLITE:
+                    $personAccess = new PersonAccessSqlite($access);
+                    break;
+                case MYSQL:
+                    $personAccess = new PersonAccessMysql($access);
+                    break;
+            }
+            $this->personAccess = $personAccess;
         }
 
-        return $userAccess;
+        return $personAccess;
     }
 
     private function getSessionAccess(): SessionAccess
@@ -98,7 +108,15 @@ class UserHandler extends DataHandler
 
         if (!$isExists) {
             $access = $this->getAccess();
-            $sessionAccess = new SessionAccess($access);
+
+            switch (DBMS) {
+                case SQLITE:
+                    $sessionAccess = new SessionAccessSqlite($access);
+                    break;
+                case MYSQL:
+                    $sessionAccess = new SessionAccessMysql($access);
+                    break;
+            }
             $this->sessionAccess = $sessionAccess;
         }
 

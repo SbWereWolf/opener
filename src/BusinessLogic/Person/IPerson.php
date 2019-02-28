@@ -5,7 +5,7 @@
  * DateTime: 01.01.2019 5:17
  */
 
-namespace BusinessLogic\User;
+namespace BusinessLogic\Person;
 
 
 /**
@@ -23,19 +23,19 @@ namespace BusinessLogic\User;
  *   ),
  * )
  */
-interface IUser
+interface IPerson
 {
     /**
      * @param string $email
-     * @return User
+     * @return Person
      */
-    public function setEmail($email): IUser;
+    public function setEmail($email): IPerson;
 
     /**
      * @param string $secret
-     * @return User
+     * @return Person
      */
-    public function setSecret($secret): IUser;
+    public function setSecret($secret): IPerson;
 
     /**
      * @return string
@@ -49,9 +49,9 @@ interface IUser
 
     /**
      * @param string $password
-     * @return User
+     * @return Person
      */
-    public function setPassword(string $password): IUser;
+    public function setPassword(string $password): IPerson;
 
     /**
      * @return string

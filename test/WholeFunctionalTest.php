@@ -50,6 +50,9 @@ class WholeFunctionalTest extends \PHPUnit\Framework\TestCase
      */
     private function RunWebCall($request)
     {
+        if (!defined('APPLICATION_ROOT')) {
+            define('APPLICATION_ROOT', realpath(__DIR__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR);
+        }
         require_once(APPLICATION_ROOT . 'test/test-configuration.php');
         $app = require(APPLICATION_ROOT . 'api/production-configuration.php');
 

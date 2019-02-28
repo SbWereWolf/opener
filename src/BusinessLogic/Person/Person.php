@@ -5,23 +5,23 @@
  * DateTime: 01.01.2019 5:17
  */
 
-namespace BusinessLogic\User;
+namespace BusinessLogic\Person;
 
 
-class User implements IUser
+class Person implements IPerson
 {
 
     private $email = '';
     private $secret = '';
     private $password = '';
 
-    public function setEmail($email): IUser
+    public function setEmail($email): IPerson
     {
         $this->email = strval($email);
         return $this;
     }
 
-    public function setSecret($secret): IUser
+    public function setSecret($secret): IPerson
     {
         $this->secret = strval($secret);
         return $this;
@@ -45,9 +45,9 @@ class User implements IUser
 
     /**
      * @param string $password
-     * @return User
+     * @return Person
      */
-    public function setPassword(string $password): IUser
+    public function setPassword(string $password): IPerson
     {
         $this->password = $password;
         return $this;

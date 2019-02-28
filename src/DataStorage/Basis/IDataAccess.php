@@ -11,5 +11,5 @@ interface IDataAccess
 
     public function isSuccess(): bool;
 
-    public function getData(): Content;;
+    public function getData(): Content;
 }

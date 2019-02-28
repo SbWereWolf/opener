@@ -5,19 +5,19 @@
  * DateTime: 02.01.2019 18:47
  */
 
-namespace BusinessLogic\User;
+namespace BusinessLogic\Person;
 
 
 use BusinessLogic\Basis\Content;
 use DataStorage\Basis\DataSource;
-use DataStorage\User\UserHandler;
+use DataStorage\Person\PersonHandler;
 
-class UserManager
+class PersonManager
 {
     private $user = null;
     private $dataPath = null;
 
-    public function __construct(IUser $user, DataSource $dataPath)
+    public function __construct(IPerson $user, DataSource $dataPath)
     {
         $this->setDataPath($dataPath)
             ->setUser($user);
@@ -33,7 +33,7 @@ class UserManager
         $user->setSecret($secret);
 
         $dataPath = $this->getDataPath();
-        $result = (new UserHandler($dataPath))->registerUser($user);
+        $result = (new PersonHandler($dataPath))->registerPerson($user);
 
         return $result;
     }
@@ -43,12 +43,12 @@ class UserManager
         $user = $this->getUser();
 
         $dataPath = $this->getDataPath();
-        $result = (new UserHandler($dataPath))->startSession($user);
+        $result = (new PersonHandler($dataPath))->startSession($user);
 
         return $result;
     }
 
-    public function getUser(): IUser
+    public function getUser(): IPerson
     {
         return $this->user;
     }

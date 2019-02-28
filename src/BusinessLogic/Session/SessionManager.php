@@ -41,9 +41,6 @@ class SessionManager
         $result = (new SessionHandler($dataPath))->prolong($session);
 
         $isValid = $result->isSuccess();
-        if ($isValid) {
-            $isValid = !empty($result->next());
-        }
 
         return $isValid;
     }

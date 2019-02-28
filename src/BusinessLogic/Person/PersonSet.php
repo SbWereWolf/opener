@@ -5,12 +5,12 @@
  * DateTime: 02.01.2019 1:45
  */
 
-namespace BusinessLogic\User;
+namespace BusinessLogic\Person;
 
 
 use BusinessLogic\Basis\DataSet;
 
-class UserSet extends DataSet
+class PersonSet extends DataSet
 {
     /**
      * @param $element
@@ -20,7 +20,7 @@ class UserSet extends DataSet
     {
         $result = false;
 
-        $isValid = $element instanceof IUser;
+        $isValid = $element instanceof IPerson;
         if ($isValid) {
             $this->collection[] = $element;
             $result = true;

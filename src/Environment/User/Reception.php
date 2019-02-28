@@ -3,8 +3,8 @@
 namespace Environment\User;
 
 
-use BusinessLogic\User\IUser;
-use BusinessLogic\User\User;
+use BusinessLogic\Person\IPerson;
+use BusinessLogic\Person\Person;
 use LanguageFeatures\ArrayParser;
 
 /**
@@ -30,16 +30,16 @@ class Reception extends \Environment\Basis\Reception
     }
 
     /**
-     * @return IUser
+     * @return IPerson
      */
-    public function toCreate(): IUser
+    public function toCreate(): IPerson
     {
         $item = $this->setupFromBody();
 
         return $item;
     }
 
-    private function setupFromBody(): IUser
+    private function setupFromBody(): IPerson
     {
         $body = $this->getRequest()->getParsedBody();
         $this->setParser(new ArrayParser($body));
@@ -49,12 +49,12 @@ class Reception extends \Environment\Basis\Reception
         return $user;
     }
 
-    private function setupUser(): IUser
+    private function setupUser(): IPerson
     {
         $email = $this->getEmail();
         $password = $this->getPassword();
 
-        $user = (new User())
+        $user = (new Person())
             ->setEmail($email)
             ->setPassword($password);
 
